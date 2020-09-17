@@ -14,38 +14,23 @@
         }
     }
 
-    chrome.extension.sendMessage({greeting: "add",data:window.location.href}, function(response) { }  );
     findsomething(window.location.href);
 
     var source_href = source.match(/href=\".*?\"/g);
     var source_src = source.match(/src=\".*?\"/g);
     // console.log(source_href,source_src)
-    chrome.extension.sendMessage({greeting: "get"}, 
-        function (response){
-            farewell=response.farewell;
-            for(var i=0;i<source_href.length;i++){
-                var u = deal_url(source_href[i].replace('href=\"','').replace('\"',''));
-                if(u){
-                    // alert(u)
-                    if(farewell.indexOf(u)=="-1"){
-                        chrome.extension.sendMessage({greeting: "add",data:u}, function(response) { }  );
-                        console.log(u);
-                        findsomething(u);
-                    }
-                }
-            }
-            for(var i=0;i<source_src.length;i++){
-                var u = deal_url(source_src[i].replace('src=\"','').replace('\"',''));
-                if(u){
-                    // alert(u)
-                    if(farewell.indexOf(u)=="-1"){
-                        chrome.extension.sendMessage({greeting: "add",data:u}, function(response) {  }  );
-                        console.log(u);
-                        findsomething(u);
-                    }
-                }
-            }
-        });
+    for(var i=0;i<source_href.length;i++){
+        var u = deal_url(source_href[i].replace('href=\"','').replace('\"',''));
+        if(u){
+            findsomething(u);
+        }
+    }
+    for(var i=0;i<source_src.length;i++){
+        var u = deal_url(source_src[i].replace('src=\"','').replace('\"',''));
+        if(u){
+            findsomething(u);
+        }
+    }
     function deal_url(u){
         if(u.indexOf(".js")=='-1'){
             return ;
