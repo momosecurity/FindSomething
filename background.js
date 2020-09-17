@@ -69,14 +69,7 @@ function collect_static(arr1,arr2) {
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    if (request.greeting == "get")//判断是否为要处理的消息
-      sendResponse({farewell: get_js()});
-  	else if (request.greeting == "add"){
-  		console.log("add "+sender.tab.url);
-  		add_js(request.data);
-      sendResponse({farewell: get_js()});
-    }
-    else if (request.greeting == "result"){
+    if (request.greeting == "result"){
       var tmp_data = request.data;
       //遍历所有数据类型
       for (var i = 0; i < key.length; i++) {
