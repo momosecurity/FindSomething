@@ -19,16 +19,20 @@
     var source_href = source.match(/href=\".*?\"/g);
     var source_src = source.match(/src=\".*?\"/g);
     // console.log(source_href,source_src)
-    for(var i=0;i<source_href.length;i++){
-        var u = deal_url(source_href[i].replace('href=\"','').replace('\"',''));
-        if(u){
-            findsomething(u);
+    if(source_href){
+        for(var i=0;i<source_href.length;i++){
+            var u = deal_url(source_href[i].replace('href=\"','').replace('\"',''));
+            if(u){
+                findsomething(u);
+            }
         }
     }
-    for(var i=0;i<source_src.length;i++){
-        var u = deal_url(source_src[i].replace('src=\"','').replace('\"',''));
-        if(u){
-            findsomething(u);
+    if(source_src){
+        for(var i=0;i<source_src.length;i++){
+            var u = deal_url(source_src[i].replace('src=\"','').replace('\"',''));
+            if(u){
+                findsomething(u);
+            }
         }
     }
     function deal_url(u){
