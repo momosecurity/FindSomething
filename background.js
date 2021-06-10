@@ -67,7 +67,7 @@ function collect_static(arr1,arr2) {
   return {'arr1':arr3,'static':arr2}
 }
 
-chrome.runtime.onMessage.addListener(
+browser.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.greeting == "result"){
       var tmp_data = request.data;
