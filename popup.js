@@ -3,7 +3,7 @@
 const bg = chrome.extension.getBackgroundPage();
 var result;
 var current;
-var key = ["ip","ip_port","domain","path","url","static","sfz","mobile","mail"]
+var key = ["ip","ip_port","domain","path","url","static","sfz","mobile","mail","jwt","algorithm"]
 chrome.tabs.getSelected(null, function (tab) {
         current=tab.url;
         result = bg.result(current);
@@ -13,7 +13,7 @@ chrome.tabs.getSelected(null, function (tab) {
                 console.log(result[key[k]])
                 let p="";
                 for(var i in result[key[k]]){
-                    p = p + result[key[k]][i].substring(1,result[key[k]][i].length-1) +'\n'
+                    p = p + result[key[k]][i] +'\n'
                 }
                 document.getElementById(key[k]).innerText=p;
             }
