@@ -3,7 +3,7 @@
 var js = [];
 var search_data = {};
 var static_file = ['.jpg','.png','.gif','.css','.svg','.ico','.js'];
-var key = ["ip","ip_port","domain","path","url","sfz","mobile","mail"];
+var key = ["ip","ip_port","domain","path","url","sfz","mobile","mail","jwt","algorithm"];
 function get_js(){
 	return js;
 }
@@ -67,6 +67,14 @@ function collect_static(arr1,arr2) {
   return {'arr1':arr3,'static':arr2}
 }
 
+function sub_1(arr1) {
+  var arr3 = []
+  arr1.forEach(function (item,index,array) {
+    arr3.push(item.substring(1,item.length-1))
+  })
+  return arr3
+}
+
 browser.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.greeting == "result"){
@@ -77,6 +85,8 @@ browser.runtime.onMessage.addListener(
         if (request.data[key[i]] == null){
           continue;
         }
+        // 把前端的处理放到这里避免重复
+        tmp_data[key[i]] = sub_1(tmp_data[key[i]])
           //如果search_data有历史数据，进行检查
           if (request.data['current'] in search_data){
             for (var j = 0; j < key.length; j++) {
