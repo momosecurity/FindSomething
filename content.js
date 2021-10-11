@@ -67,7 +67,6 @@
                 url: url,
                 type: 'get',
                 dataType: 'text',
-                async:false,
             })
         .done(function(data) {
                 var search_data = {'current':href}
