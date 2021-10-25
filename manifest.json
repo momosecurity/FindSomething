@@ -10,7 +10,7 @@
       "matches": [
         "https://*/*","http://*/*"
       ],
-      "js": ["jquery.js", "content.js"]
+      "js": ["jquery-3.6.0.min.js", "content.js"]
   }],
   "icons":{"16": "icons/icon_16.png","48": "icons/icon_48.png","128": "icons/icon_128.png"},
   "background":{
