@@ -13,7 +13,8 @@ current_tab.then(function (tabs) {
                 for(var i in result_data[key[k]]){
                     p = p + result_data[key[k]][i] +'\n'
                 }
-                document.getElementById(key[k]).innerText=p;
+                $("p#"+key[k]).css("white-space","pre");
+                $("p#"+key[k]).text(p);
             }
         }
 });
