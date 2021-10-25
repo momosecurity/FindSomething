@@ -75,7 +75,7 @@ function sub_1(arr1) {
   return arr3
 }
 
-browser.runtime.onMessage.addListener(
+chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.greeting == "result"){
       var tmp_data = request.data;
