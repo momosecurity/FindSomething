@@ -7,21 +7,22 @@
     var source = document.getElementsByTagName('html')[0].innerHTML;
     var hostPath;
     var urlPath;
-    var urlWhiteList = ['baidu.com','google.com'];
+    var urlWhiteList = ['google.com'];
     for(var i = 0;i < urlWhiteList.length;i++){
-        if(urlWhiteList[i].indexOf(host) != "-1"){
+        if(host.indexOf(urlWhiteList[i]) != -1){
             return false;
         }
     }
 
     findsomething(window.location.href);
 
-    var source_href = source.match(/href=\".*?\"/g);
-    var source_src = source.match(/src=\".*?\"/g);
-    // console.log(source_href,source_src)
+    var source_href = source.match(/href=['"].*?['"]/g);
+    var source_src = source.match(/src=['"].*?['"]/g);
+    var script_src = source.match(/<script [^><]+src=\".*?\"/g);
+    // console.log(source_href,source_src,script_src)
     if(source_href){
         for(var i=0;i<source_href.length;i++){
-            var u = deal_url(source_href[i].replace('href=\"','').replace('\"',''));
+            var u = deal_url(source_href[i].substring(6,source_href[i].length-1));
             if(u){
                 findsomething(u);
             }
@@ -29,14 +30,24 @@
     }
     if(source_src){
         for(var i=0;i<source_src.length;i++){
-            var u = deal_url(source_src[i].replace('src=\"','').replace('\"',''));
+            var u = deal_url(source_src[i].substring(5,source_src[i].length-1));
             if(u){
                 findsomething(u);
             }
         }
     }
+    
+    function is_script(u){
+        for(var i=0;i<script_src.length;i++){
+            if (script_src[i].indexOf(u)>0){
+                return true
+            }
+        }
+        return false
+    }
+
     function deal_url(u){
-        if(u.indexOf(".js")=='-1'){
+        if(u.indexOf(".js")=='-1' && !is_script(u)){
             return ;
         }else if(u.substring(0,4)=="http"){
             if(u.indexOf('?')!='-1'){
