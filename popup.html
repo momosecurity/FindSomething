@@ -7,47 +7,68 @@
 <head>
     <meta charset="UTF-8">    
 </head>
-<body style="width:900px">
-    <div style="">
-        <div style="width: 300px; float: left;">
-            <h1>ip<button class="copy" name="#ip">复制</button></h1>
+<body style="width:780px; font-size: 14px;">
+    <div style="width:780px; height: 30px; margin-left: 15px;">
+        <a href="popup.html"><div style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #000000; color: #ffffff; border: 1px solid black;border-radius: 2px 0px 0px 2px;">主页</div></a>
+        <a href="settings.html"><div style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #ffffff; color: #000000; border: 1px solid black;border-radius: 0px 2px 2px 0px;">配置</div></a>
+    </div>
+    <div style="width:780px; height: 800px; margin-left: 15px;">
+        <div id="taskstatus" style="height: 34px; line-height: 34px;"></div>
+        <div style="width: 256px; float: left; border-right: 1px solid #e8e8e8;">
+            <div class="findsomething_title">IP<button type="button" class="copy" name="ip">复制</button></div>
             <p id="ip" style="word-break:break-word;">🈚️</p>
-            <h1>ip_port<button class="copy" name="#ip_port">复制</button></h1>
+            <div class="findsomething_title">IP_PORT<button class="copy" name="ip_port">复制</button></div>
             <p id="ip_port" style="word-break:break-word;">🈚️</p>
-            <h1>域名<button class="copy" name="#domain">复制</button></h1>
+            <div class="findsomething_title">域名<button class="copy" name="domain">复制</button></div>
             <p id="domain" style="word-break:break-word;">🈚️</p>
-            <h1>身份证<button class="copy" name="#sfz">复制</button></h1>
+            <div class="findsomething_title">身份证<button class="copy" name="sfz">复制</button></div>
             <p id="sfz" style="">🈚️</p>
-            <h1>手机号<button class="copy" name="#mobile">复制</button></h1>
+            <div class="findsomething_title">手机号<button class="copy" name="mobile">复制</button></div>
             <p id="mobile" style="">🈚️</p>
-            <h1>邮箱<button class="copy" name="#mail">复制</button></h1>
+            <div class="findsomething_title">邮箱<button class="copy" name="mail">复制</button></div>
             <p id="mail" style="">🈚️</p>
-            <h1>jwt<button class="copy" name="#jwt">复制</button></h1>
+            <div class="findsomething_title">JWT<button class="copy" name="jwt">复制</button></div>
             <p id="jwt" style="word-break:break-word;">🈚️</p>
-            <h1>算法<button class="copy" name="#algorithm">复制</button></h1>
+            <div class="findsomething_title">算法<button class="copy" name="algorithm">复制</button></div>
             <p id="algorithm" style="">🈚️</p>
-            <h1>secret<button class="copy" name="#secret">复制</button></h1>
+            <div class="findsomething_title">Secret<button class="copy" name="secret">复制</button></div>
             <p id="secret" style="">🈚️</p>
         </div>
-        <div style="width: 600px; height: 800px; float: left;">
-            <h1>path<button class="copy" name="#path">复制</button></h1>
+        <div style="width: 480px; height: 800px; float: left; margin-left:16px;">
+            <div class="findsomething_title">Path<button class="copy" name="path">复制</button></div>
             <p id="path" style="">🈚️</p>
-            <h1>incomplete_path<button class="copy" name="#incomplete_path">复制</button></h1>
+            <div class="findsomething_title">IncompletePath<button class="copy" name="incomplete_path">复制</button></div>
             <p id="incomplete_path" style="">🈚️</p>
-            <h1>url<button class="copy" name="#url">复制</button></h1>
+            <div class="findsomething_title">Url<button class="copy" name="url">复制</button></div>
             <p id="url" style="">🈚️</p>
-            <h1>static_url<button class="copy" name="#static">复制</button></h1>
+            <div class="findsomething_title">StaticUrl<button class="copy" name="static">复制</button></div>
             <p id="static" style="">🈚️</p>
         </div>
 </div>
 </body>
-<script src="jquery-3.6.0.min.js"></script>
+<!-- <script src="jquery-3.6.0.min.js"></script> -->
 <script src="popup.js"> </script>
 <style type="text/css">
     .copy {
         border-style: none;
+        background-color: #ffffff;
         float: right;
-        margin-right: 120px;
+        margin-right: 16px;
+    }
+    .findsomething_title {
+        font-size: 16px;
+        font-weight: bold;
+        border-left: 4px solid black;
+        text-indent: 4px;
+        height: 16px;
+        line-height: 16px;
+    }
+    a{
+        text-decoration:none;
+        color:#333;
+    }
+    button{
+        cursor: pointer
     }
 </style>
 </html>
