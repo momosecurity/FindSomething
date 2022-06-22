@@ -1,7 +1,22 @@
 # 变更日志
 此项目的所有显著更改将记录在此文件中。
 
+## [2.0.8]-2022-06-18
+感谢mdkk对此版本的建议
+感谢NeeSung对UI的建议
+### 添加
+- 新增了webhook配置页，当后台服务处理完成后，将数据发送到指定api
+- 新增了可拖拽的全局悬浮窗，可在配置页控制开关
+- 新增了处理进度展示
+### 变更
+- 因目前火狐浏览器扩展还不支持manifest_version3，但依旧根据chrome版本插件代码同步升级了2.0.8，后续火狐支持3后升级版本将变得很方便
+- 优化了UI
+- 因browser.storage.local.get是异步的，部分js执行放到了回调中
+### 修复
+- 尝试修复了部分数据提取不到的问题
+
 ## [2.0.7]-2022-05-26
+感谢0cat对此版本的建议
 ### 添加
 - 新增了通过关键词提取部分敏感数据，使用了nuclei的规则，感谢开源。https://github.com/projectdiscovery/nuclei-templates/blob/master/exposures/tokens/generic/credentials-disclosure.yaml
 - 新增了复制功能，一键复制该区域结果
