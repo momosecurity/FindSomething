@@ -79,35 +79,22 @@
     }
     
 
-    function findsomething(url){
-        // console.log(url);
-        chrome.runtime.sendMessage({greeting: "result",data: url, current: href, url:url}, function(response) { }  );
-        return ;
-    }
-    function show(url,something){
-        if(something){
-            console.log('----------------'+'find something in '+url+'!!!!!----------------');
-            console.log(something);
-        }else{
-            return;
-        }       
-    }
 })()
 
 
 chrome.storage.local.get(["global_float"], function(settings){
-    console.log(settings);
+    // console.log(settings);
     if (settings["global_float"]!=true){
         return
     }
-    console.log(settings["global_float"]);
-    console.log("findsomething-divglobal_float");
+    // console.log(settings["global_float"]);
+    // console.log("findsomething-divglobal_float");
     // 使用自定义标签
     const body = document.getElementsByTagName('html')[0];
     const div = document.createElement('div');
     div.setAttribute("id","findsomething-float-div");
     div.innerHTML = `
-    <findsomething-div id="neko" style="width:410px;max-height:700px;font-size:14px;color:#000000;box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1) ;background-color: #fff;border-radius: 5px;border: 1px solid #ebebeb;left:20px;top:20px;position: fixed;z-index: 1000000;overflow:scroll;">
+    <findsomething-div id="neko" style="width:410px;max-height:500px;font-size:14px;color:#000000;box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1) ;background-color: #fff;border-radius: 5px;border: 1px solid #ebebeb;left:20px;top:20px;position: fixed;z-index: 1000000;overflow:scroll;">
           <findsomething-div id="neko-title" style="display: flex;justify-content: space-between;">
             <findsomething-div id="taskstatus" style="height: 34px; line-height: 34px; margin-left: 10px;"></findsomething-div>
             <findsomething-div style="cursor: pointer;margin-top: 2px;margin-right: 10px;" onclick='(function(){document.getElementById("findsomething-float-div").removeChild(document.getElementById("neko"));})()'>隐藏</findsomething-div>
@@ -323,7 +310,7 @@ function get_info() {
             }else{
                 document.getElementById('taskstatus').textContent = "处理中..";
             }
-            sleep(1000);
+            sleep(100);
             get_info();
             return;
         }
