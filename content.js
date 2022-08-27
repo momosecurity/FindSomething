@@ -265,22 +265,25 @@ chrome.storage.local.get(["global_float"], function(settings){
 });
 
 function init_copy() {
-    var elements = document.getElementsByClassName("copy");
+    var elements = document.getElementsByClassName("finsomething_copy");
     for (var i=0, len=elements.length|0; i<len; i=i+1|0) {
         let ele_name = elements[i].name;
         elements[i].onclick=function () {
-            console.log('copy begin');
+            // console.log('copy begin');
             var inp =document.createElement('textarea');
             document.body.appendChild(inp)
             inp.value =document.getElementById(ele_name).textContent;
             inp.select();
             document.execCommand('copy',false);
             inp.remove();
-            console.log('copy end');
+            // console.log('copy end');
         }
     }
 };
-init_copy();
+setTimeout(()=>{
+    init_copy();
+}, 500);
+
 function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
