@@ -26,6 +26,16 @@ document.getElementById("global_float").onclick=function () {
 	// console.log(webhook_setting);
 }
 
+document.getElementById("fetch_timeout").onclick=function () {
+	// var webhook_setting = {};
+	chrome.storage.local.get(["fetch_timeout"], function(settings){
+		// console.log(settings);
+		chrome.storage.local.set({"fetch_timeout": settings["fetch_timeout"]==true ? false : true});
+		document.getElementById('fetch_timeout').textContent = settings["fetch_timeout"]==true ? "已关闭" : "已打开";
+	});
+	// console.log(webhook_setting);
+}
+
 chrome.storage.local.get(["webhook_setting"], function(settings){
 	console.log(settings);
 	if(settings["webhook_setting"] == {}){
@@ -39,3 +49,5 @@ chrome.storage.local.get(["webhook_setting"], function(settings){
 });
 chrome.storage.local.get(["global_float"], function(settings){
 	document.getElementById('global_float').textContent = settings["global_float"]==true ? "已打开" : "已关闭";});
+chrome.storage.local.get(["fetch_timeout"], function(settings){
+	document.getElementById('fetch_timeout').textContent = settings["fetch_timeout"]==true ? "已打开" : "已关闭";});
