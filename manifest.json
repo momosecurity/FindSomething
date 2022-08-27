@@ -1,16 +1,20 @@
 {
   "name": "FindSomething",
-  "version": "2.0.7",
+  "version": "2.0.10",
   "manifest_version": 2,
   "description": "在网页的源代码或js中找到一些有趣的东西",  
-  "permissions": [     
-    "tabs"
+  "permissions": [   
+    "https://*/*",
+    "http://*/*",
+    "tabs",
+    "storage",
+    "unlimitedStorage"
   ],
   "content_scripts": [{
       "matches": [
         "https://*/*","http://*/*"
       ],
-      "js": ["jquery-3.6.0.min.js", "content.js"]
+      "js": ["content.js"]
   }],
   "icons":{"16": "icons/icon_16.png","48": "icons/icon_48.png","128": "icons/icon_128.png"},
   "background":{

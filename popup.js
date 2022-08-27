@@ -1,37 +1,108 @@
 // @Date    : 2020-09-12 16:26:48
 // @Author  : residuallaugh
-const bg = browser.extension.getBackgroundPage();
 var key = ["ip","ip_port","domain","path","incomplete_path","url","static","sfz","mobile","mail","jwt","algorithm","secret"]
-var current_tab = browser.tabs.query({currentWindow:true, active:true});
-current_tab.then(function (tabs) {
-        var current=tabs[0].url;
-        var result_data = bg.result(current);
-        if(result_data == undefined){
-            console.log('还未提取完成');
+
+function init_copy() {
+    var elements = document.getElementsByClassName("copy");
+    for (var i=0, len=elements.length|0; i<len; i=i+1|0) {
+        let ele_name = elements[i].name;
+        let ele_id = elements[i].id;
+        elements[i].onclick=function () {
+            // console.log('copy begin');
+            var inp =document.createElement('textarea');
+            document.body.appendChild(inp)
+            var copytext = document.getElementById(ele_name).textContent;
+            if (ele_id == "path_url_button"){
+                Promise.all([getCurrentTab().then(function x(tab){
+                    // console.log(tab);
+                    if(tab == undefined){
+                        alert("请点击原页面后再复制：）")
+                        return;
+                    }
+                    var url = new URL(tab.url)
+                    var path_list = copytext.split('\n')
+                    copytext = ""
+                    for (var i = path_list.length - 1; i >= 0; i--) {
+                        if(path_list[i][0] == '.'){
+                            copytext += url.origin+'/'+path_list[i]+'\n';
+                        }else{
+                            copytext += url.origin+path_list[i]+'\n';
+                        }
+                    }
+                    inp.value = copytext.slice(0, -1);
+                    inp.select();
+                    // console.log(copytext)
+                    document.execCommand('copy',false);
+                    // inp.remove();
+                })]).then(res=> inp.remove())
+                // alert('复制成功');
+                return ;
+            }
+            inp.value = copytext;
+            inp.select();
+            document.execCommand('copy',false);
+            inp.remove();
+            // alert('复制成功');
+        }
+    }
+};
+async function getCurrentTab() {
+  let queryOptions = { active: true, lastFocusedWindow: true };
+  let [tab] = await browser.tabs.query(queryOptions);
+  return tab;
+}
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+function show_info(result_data) {
+    for (var k in key){
+        if (result_data[key[k]]!=null && result_data[key[k]].length != 0){
+            // console.log(result_data[key[k]])
+            let p="";
+            for(var i in result_data[key[k]]){
+                p = p + result_data[key[k]][i] +'\n'
+            }
+            document.getElementById(key[k]).style.whiteSpace="pre";
+            document.getElementById(key[k]).textContent=p;
+        }
+    }
+}
+
+getCurrentTab().then(function get_info(tab) {
+    // console.log("findsomething_result_"+tab.url)
+    browser.storage.local.get(["findsomething_result_"+tab.url], function(result_data) {
+        if (result_data==undefined){
+            sleep(100);
+            get_info(tab);
             return;
         }
-        for (var k in key){
-            if (result_data[key[k]]!=null && result_data[key[k]].length != 0){
-                // console.log(result_data[key[k]])
-                let p="";
-                for(var i in result_data[key[k]]){
-                    p = p + result_data[key[k]][i] +'\n'
-                }
-                $("p#"+key[k]).css("white-space","pre");
-                $("p#"+key[k]).text(p);
+        result_data = result_data["findsomething_result_"+tab.url]
+        // console.log(result_data)
+        if(result_data == undefined || result_data['done']!='done'){
+            // console.log('还未提取完成');
+            if(result_data != undefined && result_data.donetasklist != undefined ){
+                // console.log("findsomething_result_"+tab.url)
+                browser.storage.local.get(["findsomething_result_"+tab.url], show_info(result_data));
+                // show_info(result_data);
+                document.getElementById('taskstatus').textContent = "处理中.."+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+            }else{
+                document.getElementById('taskstatus').textContent = "处理中..";
             }
+            sleep(1000);
+            get_info(tab);
+            return;
         }
+        document.getElementById('taskstatus').textContent = "处理完成："+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+        browser.storage.local.get(["findsomething_result_"+tab.url], show_info(result_data));
+        // show_info(result_data);
+        // 结果不一致继续刷新
+        // if(result_data['donetasklist'].length!=result_data['tasklist'].length){
+        //     get_info(tab);
+        // }
+        return;
+    });
 });
 
-$(function () {
-    $('.copy').click(function () {
-        console.log('copy begin');
-        var inp =document.createElement('textarea');
-        document.body.appendChild(inp)
-        inp.value =$($(this).attr('name')).text();
-        inp.select();
-        document.execCommand('copy',false);
-        inp.remove();
-        console.log('copy end');
-    })
-})
+
+init_copy();
