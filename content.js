@@ -79,19 +79,6 @@
     }
     
 
-    function findsomething(url){
-        // console.log(url);
-        browser.runtime.sendMessage({greeting: "result",data: url, current: href, url:url}, function(response) { }  );
-        return ;
-    }
-    function show(url,something){
-        if(something){
-            console.log('----------------'+'find something in '+url+'!!!!!----------------');
-            console.log(something);
-        }else{
-            return;
-        }       
-    }
 })()
 
 
@@ -278,11 +265,9 @@ browser.storage.local.get(["global_float"], function(settings){
 
 
     function init_copy() {
-        console.log("init_copy");
         var elements = document.getElementsByClassName("findsomething_copy");
         for (var i=0, len=elements.length|0; i<len; i=i+1|0) {
             let ele_name = elements[i].name;
-            console.log(ele_name)
             elements[i].onclick=function () {
                 // console.log('copy begin');
                 var inp =document.createElement('textarea');
@@ -295,7 +280,10 @@ browser.storage.local.get(["global_float"], function(settings){
             }
         }
     };
-    init_copy();
+    setTimeout(()=>{
+        init_copy();
+    }, 500);
+
     function sleep (time) {
       return new Promise((resolve) => setTimeout(resolve, time));
     }
@@ -325,7 +313,7 @@ browser.storage.local.get(["global_float"], function(settings){
                 }else{
                     document.getElementById('findsomething_taskstatus').textContent = "处理中..";
                 }
-                sleep(1000);
+                sleep(100);
                 get_info();
                 return;
             }

@@ -6,15 +6,43 @@ function init_copy() {
     var elements = document.getElementsByClassName("copy");
     for (var i=0, len=elements.length|0; i<len; i=i+1|0) {
         let ele_name = elements[i].name;
+        let ele_id = elements[i].id;
         elements[i].onclick=function () {
             // console.log('copy begin');
             var inp =document.createElement('textarea');
             document.body.appendChild(inp)
-            inp.value =document.getElementById(ele_name).textContent;
+            var copytext = document.getElementById(ele_name).textContent;
+            if (ele_id == "path_url_button"){
+                Promise.all([getCurrentTab().then(function x(tab){
+                    // console.log(tab);
+                    if(tab == undefined){
+                        alert("请点击原页面后再复制：）")
+                        return;
+                    }
+                    var url = new URL(tab.url)
+                    var path_list = copytext.split('\n')
+                    copytext = ""
+                    for (var i = path_list.length - 1; i >= 0; i--) {
+                        if(path_list[i][0] == '.'){
+                            copytext += url.origin+'/'+path_list[i]+'\n';
+                        }else{
+                            copytext += url.origin+path_list[i]+'\n';
+                        }
+                    }
+                    inp.value = copytext.slice(0, -1);
+                    inp.select();
+                    // console.log(copytext)
+                    document.execCommand('copy',false);
+                    // inp.remove();
+                })]).then(res=> inp.remove())
+                // alert('复制成功');
+                return ;
+            }
+            inp.value = copytext;
             inp.select();
             document.execCommand('copy',false);
             inp.remove();
-            // console.log('copy end');
+            // alert('复制成功');
         }
     }
 };
@@ -42,11 +70,21 @@ function show_info(result_data) {
 }
 
 getCurrentTab().then(function get_info(tab) {
-    browser.runtime.sendMessage({greeting: "get", current: tab.url}, function(result_data) {
-        if(result_data == undefined || result_data['done']!='done' || result_data==null){
+    // console.log("findsomething_result_"+tab.url)
+    browser.storage.local.get(["findsomething_result_"+tab.url], function(result_data) {
+        if (result_data==undefined){
+            sleep(100);
+            get_info(tab);
+            return;
+        }
+        result_data = result_data["findsomething_result_"+tab.url]
+        // console.log(result_data)
+        if(result_data == undefined || result_data['done']!='done'){
             // console.log('还未提取完成');
-            if(result_data != undefined || result_data!=null ){
-                show_info(result_data);
+            if(result_data != undefined && result_data.donetasklist != undefined ){
+                // console.log("findsomething_result_"+tab.url)
+                browser.storage.local.get(["findsomething_result_"+tab.url], show_info(result_data));
+                // show_info(result_data);
                 document.getElementById('taskstatus').textContent = "处理中.."+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
             }else{
                 document.getElementById('taskstatus').textContent = "处理中..";
@@ -56,14 +94,15 @@ getCurrentTab().then(function get_info(tab) {
             return;
         }
         document.getElementById('taskstatus').textContent = "处理完成："+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
-        show_info(result_data);
+        browser.storage.local.get(["findsomething_result_"+tab.url], show_info(result_data));
+        // show_info(result_data);
         // 结果不一致继续刷新
-        if(result_data['donetasklist'].length!=result_data['tasklist'].length){
-            get_info(tab);
-        }
+        // if(result_data['donetasklist'].length!=result_data['tasklist'].length){
+        //     get_info(tab);
+        // }
         return;
     });
-})
+});
 
 
 init_copy();

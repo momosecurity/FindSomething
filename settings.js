@@ -42,3 +42,5 @@ browser.storage.local.get(["webhook_setting"], function(settings){
 });
 browser.storage.local.get(["global_float"], function(settings){
 	document.getElementById('global_float').textContent = settings["global_float"]==true ? "已打开" : "已关闭";});
+browser.storage.local.get(["fetch_timeout"], function(settings){
+	document.getElementById('fetch_timeout').textContent = settings["fetch_timeout"]==true ? "已打开" : "已关闭";});
