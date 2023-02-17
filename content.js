@@ -40,9 +40,11 @@
     chrome.runtime.sendMessage({greeting: "find",data: target_list, current: href}, function(response) { });
 
     function is_script(u){
-        for(var i=0;i<script_src.length;i++){
-            if (script_src[i].indexOf(u)>0){
-                return true
+        if(script_src){
+            for(var i=0;i<script_src.length;i++){
+                if (script_src[i].indexOf(u)>0){
+                    return true
+                }
             }
         }
         return false
@@ -266,17 +268,19 @@ chrome.storage.local.get(["global_float"], function(settings){
 
 function init_copy() {
     var elements = document.getElementsByClassName("finsomething_copy");
-    for (var i=0, len=elements.length|0; i<len; i=i+1|0) {
-        let ele_name = elements[i].name;
-        elements[i].onclick=function () {
-            // console.log('copy begin');
-            var inp =document.createElement('textarea');
-            document.body.appendChild(inp)
-            inp.value =document.getElementById(ele_name).textContent;
-            inp.select();
-            document.execCommand('copy',false);
-            inp.remove();
-            // console.log('copy end');
+    if (elements) {
+        for (var i=0, len=elements.length|0; i<len; i=i+1|0) {
+            let ele_name = elements[i].name;
+            elements[i].onclick=function () {
+                // console.log('copy begin');
+                var inp =document.createElement('textarea');
+                document.body.appendChild(inp)
+                inp.value =document.getElementById(ele_name).textContent;
+                inp.select();
+                document.execCommand('copy',false);
+                inp.remove();
+                // console.log('copy end');
+            }
         }
     }
 };
@@ -291,15 +295,17 @@ function sleep (time) {
 var key = ["ip","ip_port","domain","path","incomplete_path","url","static","sfz","mobile","mail","jwt","algorithm","secret"]
 
 function show_info(result_data) {
-    for (var k in key){
-        if (result_data[key[k]]!=null && result_data[key[k]].length != 0){
-            // console.log(result_data[key[k]])
-            let p="";
-            for(var i in result_data[key[k]]){
-                p = p + result_data[key[k]][i] +'\n'
+    if(result_data){
+        for (var k in key){
+            if (result_data[key[k]]){
+                // console.log(result_data[key[k]])
+                let p="";
+                for(var i in result_data[key[k]]){
+                    p = p + result_data[key[k]][i] +'\n'
+                }
+                document.getElementById(key[k]).style.whiteSpace="pre";
+                document.getElementById(key[k]).textContent=p;
             }
-            document.getElementById(key[k]).style.whiteSpace="pre";
-            document.getElementById(key[k]).textContent=p;
         }
     }
 }
