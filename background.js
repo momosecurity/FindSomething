@@ -863,7 +863,7 @@ function webhook(data) {
             // console.log(webhookRequest);
             fetch(webhookRequest, webhookInit).then(function(response) {
                 // console.log(response);
-            });
+            }).catch(err=>{ console.log("fetch error",err)});
         }
     });
 }
@@ -943,7 +943,7 @@ browser.runtime.onMessage.addListener(
                     search_data[request.current]['donetasklist'].push(0);
                     browser.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                     });
-                });
+                }).catch(err=>{ console.log("fetch error",err)});
                 promiseTask.push(p);
             }
             catch (e){
