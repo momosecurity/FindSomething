@@ -982,6 +982,7 @@ chrome.runtime.onMessage.addListener(
                         webhook(request.current);
                         search_data[request.current]['done'] = 'done';
                         // console.log(search_data[request.current])
+                        refresh_count();
                         chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                     }).catch(function(err) {
                         console.log(err);
@@ -993,6 +994,7 @@ chrome.runtime.onMessage.addListener(
                     webhook(request.current);
                     search_data[request.current]['done'] = 'done';
                     // console.log(search_data[request.current])
+                    refresh_count();
                     chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                 });
             }
