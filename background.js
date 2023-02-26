@@ -705,6 +705,8 @@ var nuclei_regex = [
     /["']?[\w_-]*?bucket[\w_-]*?["']?[^\S\r\n]*[=:][^\S\r\n]*["']?[\w-]+["']?/gi,
     /["']?[\w_-]*?token[\w_-]*?["']?[^\S\r\n]*[=:][^\S\r\n]*["']?[\w-]+["']?/gi
 ]
+var tab_url = {};
+var selected_id = -1;
 
 function get_js(){
 	return js;
@@ -868,6 +870,19 @@ function webhook(data) {
     });
 }
 
+function refresh_count() {
+  const cur = tab_url[selected_id];
+  let cnt = 0;
+  for (const k in search_data[cur]) {
+    if (k == "done" || k == "tasklist" || k == "donetasklist" || k == "current")
+      continue;
+    const v = search_data[cur][k];
+    if (v == "🈚️" || v == "") continue;
+    cnt++;
+  }
+  chrome.action.setBadgeText({ text: "" + cnt });
+}
+
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     var abort_controller = new AbortController();
@@ -941,6 +956,8 @@ chrome.runtime.onMessage.addListener(
                     }
                     }
                     search_data[request.current]['donetasklist'].push(0);
+                    tab_url[sender.tab.id] = request.current;
+                    refresh_count();
                     chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                     });
                 }).catch(err=>{ console.log("fetch error",err)});
@@ -965,6 +982,7 @@ chrome.runtime.onMessage.addListener(
                         webhook(request.current);
                         search_data[request.current]['done'] = 'done';
                         // console.log(search_data[request.current])
+                        refresh_count();
                         chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                     }).catch(function(err) {
                         console.log(err);
@@ -976,6 +994,7 @@ chrome.runtime.onMessage.addListener(
                     webhook(request.current);
                     search_data[request.current]['done'] = 'done';
                     // console.log(search_data[request.current])
+                    refresh_count();
                     chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                 });
             }
@@ -985,4 +1004,19 @@ chrome.runtime.onMessage.addListener(
         sendResponse(search_data[request.current]);
         return true;
     }
+});
+
+chrome.tabs.onUpdated.addListener(function (tabId, props) {
+  if (props.status == "complete" && tabId == selected_id)
+    refresh_count();
+});
+
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+  selected_id = activeInfo.tabId;
+  refresh_count();
+});
+
+chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  selected_id = tabs[0].id;
+  refresh_count();
 });
