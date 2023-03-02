@@ -9,11 +9,27 @@ document.getElementById("save").onclick=function () {
 	chrome.storage.local.set({"webhook_setting": webhook_setting});
 }
 document.getElementById("reset").onclick=function () {
-	// var webhook_setting = {};
+	let webhook_setting = {"url":"","arg":"","headers":{}};
 	document.getElementById('url').value = "";
 	document.getElementById('arg').value = "";
 	document.getElementById('headers').value = "{}";
 	// console.log(webhook_setting);
+	chrome.storage.local.set({"webhook_setting": webhook_setting});
+}
+
+document.getElementById("save_allowlist").onclick=function () {
+	snsArr = document.getElementById('allowlist').value.split(/[(\r\n)\r\n]+/);
+	snsArr.forEach((item, index)=>{
+		if(!item){
+			snsArr.splice(index,1);
+		}
+	})
+	// console.log(snsArr)
+	chrome.storage.local.set({"allowlist": snsArr});
+}
+document.getElementById("reset_allowlist").onclick=function () {
+	document.getElementById('allowlist').value = "";
+	chrome.storage.local.set({"allowlist": []});
 }
 
 document.getElementById("global_float").onclick=function () {
@@ -38,7 +54,7 @@ document.getElementById("fetch_timeout").onclick=function () {
 
 chrome.storage.local.get(["webhook_setting"], function(settings){
 	console.log(settings);
-	if(settings["webhook_setting"] == {}){
+	if(!settings || settings == {} || !settings["webhook_setting"] ){
         console.log('获取webhook_setting失败');
         return;
     }

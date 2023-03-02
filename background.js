@@ -827,7 +827,7 @@ function webhook(data) {
     data = JSON.stringify(search_data[data]);
     // console.log(data);
     chrome.storage.local.get(["webhook_setting"], function(settings){
-        if(settings["webhook_setting"] == {} || settings["webhook_setting"] ==undefined){
+        if(!settings || !settings["webhook_setting"] || settings["webhook_setting"] == {} || settings["webhook_setting"] ==undefined){
             // console.log('获取webhook_setting失败');
             return;
         }
@@ -908,8 +908,8 @@ chrome.runtime.onMessage.addListener(
         for (var i = request.data.length - 1; i >= 0; i--) {
             try{
                 var myRequest = new Request(request.data[i], myInit);
-                search_data[request.current]['tasklist'].push(0);
                 let p = fetch(myRequest,myInit).then(function(response) {
+                    search_data[request.current]['tasklist'].push(0);
                     // console.log(response);
                     response.text().then(function(text) {
                     // console.log(text);
@@ -960,7 +960,12 @@ chrome.runtime.onMessage.addListener(
                     refresh_count();
                     chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                     });
-                }).catch(err=>{ console.log("fetch error",err)});
+                }).catch(err=>{
+                    console.log("fetch error",err);
+                    search_data[request.current]['donetasklist'].push(0);
+                    refresh_count();
+                    chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
+                });
                 promiseTask.push(p);
             }
             catch (e){
@@ -1007,16 +1012,18 @@ chrome.runtime.onMessage.addListener(
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, props) {
-  if (props.status == "complete" && tabId == selected_id)
-    refresh_count();
+    if (props.status == "complete" && tabId == selected_id)
+        refresh_count();
 });
 
 chrome.tabs.onActivated.addListener(function (activeInfo) {
-  selected_id = activeInfo.tabId;
-  refresh_count();
+    selected_id = activeInfo.tabId;
+    refresh_count();
 });
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-  selected_id = tabs[0].id;
-  refresh_count();
+    if(tabs && tabs[0]){
+        selected_id = tabs[0].id;
+        refresh_count();
+    }
 });

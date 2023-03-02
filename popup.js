@@ -75,18 +75,18 @@ function show_info(result_data) {
 getCurrentTab().then(function get_info(tab) {
     // console.log("findsomething_result_"+tab.url)
     chrome.storage.local.get(["findsomething_result_"+tab.url], function(result_data) {
-        if (result_data==undefined){
+        if (!result_data){
             sleep(100);
             get_info(tab);
             return;
         }
         result_data = result_data["findsomething_result_"+tab.url]
         // console.log(result_data)
-        if(result_data == undefined || result_data['done']!='done'){
+        if(!result_data || result_data['done']!='done'){
             // console.log('还未提取完成');
             if(result_data && result_data.donetasklist){
                 // console.log("findsomething_result_"+tab.url)
-                chrome.storage.local.get(["findsomething_result_"+tab.url], show_info(result_data));
+                chrome.storage.local.get(["findsomething_result_"+tab.url], function(result){show_info(result["findsomething_result_"+tab.url]);});
                 // show_info(result_data);
                 document.getElementById('taskstatus').textContent = "处理中.."+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
             }else{
@@ -96,8 +96,9 @@ getCurrentTab().then(function get_info(tab) {
             get_info(tab);
             return;
         }
+        console.log(result_data)
         document.getElementById('taskstatus').textContent = "处理完成："+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
-        chrome.storage.local.get(["findsomething_result_"+tab.url], show_info(result_data));
+        chrome.storage.local.get(["findsomething_result_"+tab.url], function(result){show_info(result["findsomething_result_"+tab.url]);});
         // show_info(result_data);
         // 结果不一致继续刷新
         // if(result_data['donetasklist'].length!=result_data['tasklist'].length){
