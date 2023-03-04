@@ -902,7 +902,7 @@ chrome.runtime.onMessage.addListener(
             search_data[request.current]['tasklist'] = [];
             search_data[request.current]['donetasklist'] = [];
         }else{
-            search_data[request.current] = {'current':request.current, 'tasklist': [], 'donetasklist': []};
+            search_data[request.current] = {'current':request.current, 'tasklist': [], 'donetasklist': [], 'source': {}};
         }
         let promiseTask = [];
         for (var i = request.data.length - 1; i >= 0; i--) {
@@ -919,41 +919,44 @@ chrome.runtime.onMessage.addListener(
 
                     //遍历所有数据类型
                     for (var i = 0; i < key.length; i++) {
-                    //如果传入的数据没有这个类型，就看下一个
-                    if (tmp_data[key[i]] == null){
-                      continue;
-                    }
-                    // 把前端的处理放到这里避免重复
-                    if (not_sub_key.indexOf(key[i])<0){
-                      tmp_data[key[i]] = sub_1(tmp_data[key[i]])
-                    }
-                    //如果search_data有历史数据，进行检查
-                    if (tmp_data['current'] in search_data){
-                      for (var j = 0; j < key.length; j++) {
-                        if (search_data[tmp_data['current']][key[j]]!=null){
-                          tmp_data[key[i]] = jiaoji(unique(tmp_data[key[i]]),find(unique(tmp_data[key[i]]),search_data[tmp_data['current']][key[j]]))
+                        //如果传入的数据没有这个类型，就看下一个
+                        if (tmp_data[key[i]] == null){
+                          continue;
                         }
-                      }
-                    }
-                    if (tmp_data['current'] in search_data && search_data[tmp_data['current']][key[i]]!=null ){
-                      var search_data_value = unique(add(search_data[tmp_data['current']][key[i]],tmp_data[key[i]])).sort()
-                      if ('static' in search_data[tmp_data['current']]){
-                        var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
-                      }else{
-                        var res = collect_static(search_data_value,[])
-                      }
-                      search_data[tmp_data['current']][key[i]] = res['arr1']
-                      search_data[tmp_data['current']]['static'] = res['static']
-                    }else{
-                      var search_data_value = unique(tmp_data[key[i]]).sort()
-                      if ('static' in search_data[tmp_data['current']]){
-                        var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
-                      }else{
-                        var res = collect_static(search_data_value,[])
-                      }
-                      search_data[tmp_data['current']]['static'] = res['static']
-                      search_data[tmp_data['current']][key[i]] = res['arr1']
-                    }
+                        // 把前端的处理放到这里避免重复
+                        if (not_sub_key.indexOf(key[i])<0){
+                          tmp_data[key[i]] = sub_1(tmp_data[key[i]])
+                        }
+                        tmp_data[key[i]].map((item)=>{
+                            search_data[tmp_data['current']]['source'][item] = request.data[i]
+                        })
+                        //如果search_data有历史数据，进行检查
+                        if (tmp_data['current'] in search_data){
+                          for (var j = 0; j < key.length; j++) {
+                            if (search_data[tmp_data['current']][key[j]]!=null){
+                              tmp_data[key[i]] = jiaoji(unique(tmp_data[key[i]]),find(unique(tmp_data[key[i]]),search_data[tmp_data['current']][key[j]]))
+                            }
+                          }
+                        }
+                        if (tmp_data['current'] in search_data && search_data[tmp_data['current']][key[i]]!=null ){
+                          var search_data_value = unique(add(search_data[tmp_data['current']][key[i]],tmp_data[key[i]])).sort()
+                          if ('static' in search_data[tmp_data['current']]){
+                            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
+                          }else{
+                            var res = collect_static(search_data_value,[])
+                          }
+                          search_data[tmp_data['current']][key[i]] = res['arr1']
+                          search_data[tmp_data['current']]['static'] = res['static']
+                        }else{
+                          var search_data_value = unique(tmp_data[key[i]]).sort()
+                          if ('static' in search_data[tmp_data['current']]){
+                            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
+                          }else{
+                            var res = collect_static(search_data_value,[])
+                          }
+                          search_data[tmp_data['current']]['static'] = res['static']
+                          search_data[tmp_data['current']][key[i]] = res['arr1']
+                        }
                     }
                     search_data[request.current]['donetasklist'].push(0);
                     tab_url[sender.tab.id] = request.current;

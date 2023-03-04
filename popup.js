@@ -58,16 +58,31 @@ function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+// 实体编码，防止xss
+function htmlEncodeByRegExp(str) {
+    var s = '';
+    if(str.length === 0) {
+        return '';
+    }
+    s = str.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    s = s.replace(/ /g,'&nbsp;');
+    s = s.replace(/\'/g,'&#39;');
+    s= s.replace(/\"/g,'&quot;');
+    return s;
+}
+
 function show_info(result_data) {
     for (var k in key){
         if (result_data[key[k]]){
             // console.log(result_data[key[k]])
             let p="";
             for(var i in result_data[key[k]]){
-                p = p + result_data[key[k]][i] +'\n'
+                p = p + '<span title="' + htmlEncodeByRegExp(result_data['source'][result_data[key[k]][i]]?result_data['source'][result_data[key[k]][i]]:'') + '"><a href="' + htmlEncodeByRegExp(result_data['source'][result_data[key[k]][i]]?result_data['source'][result_data[key[k]][i]]:'') + '">'+ htmlEncodeByRegExp(result_data[key[k]][i]) +'</a></span>'+'\n'
             }
             document.getElementById(key[k]).style.whiteSpace="pre";
-            document.getElementById(key[k]).textContent=p;
+            document.getElementById(key[k]).innerHTML=p;
         }
     }
 }
@@ -96,7 +111,7 @@ getCurrentTab().then(function get_info(tab) {
             get_info(tab);
             return;
         }
-        console.log(result_data)
+        // console.log(result_data)
         document.getElementById('taskstatus').textContent = "处理完成："+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
         chrome.storage.local.get(["findsomething_result_"+tab.url], function(result){show_info(result["findsomething_result_"+tab.url]);});
         // show_info(result_data);
