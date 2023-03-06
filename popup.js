@@ -77,12 +77,25 @@ function show_info(result_data) {
     for (var k in key){
         if (result_data[key[k]]){
             // console.log(result_data[key[k]])
-            let p="";
-            for(var i in result_data[key[k]]){
-                p = p + '<span title="' + htmlEncodeByRegExp(result_data['source'][result_data[key[k]][i]]?result_data['source'][result_data[key[k]][i]]:'') + '"><a href="' + htmlEncodeByRegExp(result_data['source'][result_data[key[k]][i]]?result_data['source'][result_data[key[k]][i]]:'') + '">'+ htmlEncodeByRegExp(result_data[key[k]][i]) +'</a></span>'+'\n'
+            let container = document.getElementById(key[k]);
+            while((ele = container.firstChild)){
+                ele.remove();
             }
-            document.getElementById(key[k]).style.whiteSpace="pre";
-            document.getElementById(key[k]).innerHTML=p;
+            container.style.whiteSpace = "pre";
+            for (var i in result_data[key[k]]){
+                let link = document.createElement("a");
+                link.textContent = result_data[key[k]][i]+'\n';
+                let source = result_data['source'][result_data[key[k]][i]];
+                if (source) {
+                    //虽然无法避免被xss，但插件默认提供了正确的CSP，这意味着我们即使不特殊处理，javascript也不会被执行。
+                    // source = 'javascript:console.log`1`'
+                    link.setAttribute("href", source);
+                    link.setAttribute("title", source);
+                }
+                let span = document.createElement("span");
+                span.appendChild(link);
+                container.appendChild(span);
+            }
         }
     }
 }
