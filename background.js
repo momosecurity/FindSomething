@@ -905,9 +905,9 @@ chrome.runtime.onMessage.addListener(
             search_data[request.current] = {'current':request.current, 'tasklist': [], 'donetasklist': [], 'source': {}};
         }
         let promiseTask = [];
-        for (var i = request.data.length - 1; i >= 0; i--) {
+        request.data.map((req_url)=>{
             try{
-                var myRequest = new Request(request.data[i], myInit);
+                var myRequest = new Request(req_url, myInit);
                 let p = fetch(myRequest,myInit).then(function(response) {
                     search_data[request.current]['tasklist'].push(0);
                     // console.log(response);
@@ -928,7 +928,7 @@ chrome.runtime.onMessage.addListener(
                           tmp_data[key[i]] = sub_1(tmp_data[key[i]])
                         }
                         tmp_data[key[i]].map((item)=>{
-                            search_data[tmp_data['current']]['source'][item] = request.data[i]
+                            search_data[tmp_data['current']]['source'][item] = req_url
                         })
                         //如果search_data有历史数据，进行检查
                         if (tmp_data['current'] in search_data){
@@ -972,9 +972,9 @@ chrome.runtime.onMessage.addListener(
                 promiseTask.push(p);
             }
             catch (e){
-                continue;
+                // console.log(e);
             }
-        }
+        });
         chrome.storage.local.get(["fetch_timeout"], function(settings){
             if(settings["fetch_timeout"] == true){
 
