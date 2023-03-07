@@ -58,16 +58,44 @@ function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+// 实体编码，防止xss
+function htmlEncodeByRegExp(str) {
+    var s = '';
+    if(str.length === 0) {
+        return '';
+    }
+    s = str.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    s = s.replace(/ /g,'&nbsp;');
+    s = s.replace(/\'/g,'&#39;');
+    s= s.replace(/\"/g,'&quot;');
+    return s;
+}
+
 function show_info(result_data) {
     for (var k in key){
         if (result_data[key[k]]){
             // console.log(result_data[key[k]])
-            let p="";
-            for(var i in result_data[key[k]]){
-                p = p + result_data[key[k]][i] +'\n'
+            let container = document.getElementById(key[k]);
+            while((ele = container.firstChild)){
+                ele.remove();
             }
-            document.getElementById(key[k]).style.whiteSpace="pre";
-            document.getElementById(key[k]).textContent=p;
+            container.style.whiteSpace = "pre";
+            for (var i in result_data[key[k]]){
+                let link = document.createElement("a");
+                link.textContent = result_data[key[k]][i]+'\n';
+                let source = result_data['source'][result_data[key[k]][i]];
+                if (source) {
+                    //虽然无法避免被xss，但插件默认提供了正确的CSP，这意味着我们即使不特殊处理，javascript也不会被执行。
+                    // source = 'javascript:console.log`1`'
+                    link.setAttribute("href", source);
+                    link.setAttribute("title", source);
+                }
+                let span = document.createElement("span");
+                span.appendChild(link);
+                container.appendChild(span);
+            }
         }
     }
 }
@@ -75,18 +103,18 @@ function show_info(result_data) {
 getCurrentTab().then(function get_info(tab) {
     // console.log("findsomething_result_"+tab.url)
     chrome.storage.local.get(["findsomething_result_"+tab.url], function(result_data) {
-        if (result_data==undefined){
+        if (!result_data){
             sleep(100);
             get_info(tab);
             return;
         }
         result_data = result_data["findsomething_result_"+tab.url]
         // console.log(result_data)
-        if(result_data == undefined || result_data['done']!='done'){
+        if(!result_data || result_data['done']!='done'){
             // console.log('还未提取完成');
             if(result_data && result_data.donetasklist){
                 // console.log("findsomething_result_"+tab.url)
-                chrome.storage.local.get(["findsomething_result_"+tab.url], show_info(result_data));
+                chrome.storage.local.get(["findsomething_result_"+tab.url], function(result){show_info(result["findsomething_result_"+tab.url]);});
                 // show_info(result_data);
                 document.getElementById('taskstatus').textContent = "处理中.."+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
             }else{
@@ -96,8 +124,9 @@ getCurrentTab().then(function get_info(tab) {
             get_info(tab);
             return;
         }
+        // console.log(result_data)
         document.getElementById('taskstatus').textContent = "处理完成："+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
-        chrome.storage.local.get(["findsomething_result_"+tab.url], show_info(result_data));
+        chrome.storage.local.get(["findsomething_result_"+tab.url], function(result){show_info(result["findsomething_result_"+tab.url]);});
         // show_info(result_data);
         // 结果不一致继续刷新
         // if(result_data['donetasklist'].length!=result_data['tasklist'].length){

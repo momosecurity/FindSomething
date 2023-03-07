@@ -827,7 +827,7 @@ function webhook(data) {
     data = JSON.stringify(search_data[data]);
     // console.log(data);
     chrome.storage.local.get(["webhook_setting"], function(settings){
-        if(settings["webhook_setting"] == {} || settings["webhook_setting"] ==undefined){
+        if(!settings || !settings["webhook_setting"] || settings["webhook_setting"] == {} || settings["webhook_setting"] ==undefined){
             // console.log('获取webhook_setting失败');
             return;
         }
@@ -902,14 +902,14 @@ chrome.runtime.onMessage.addListener(
             search_data[request.current]['tasklist'] = [];
             search_data[request.current]['donetasklist'] = [];
         }else{
-            search_data[request.current] = {'current':request.current, 'tasklist': [], 'donetasklist': []};
+            search_data[request.current] = {'current':request.current, 'tasklist': [], 'donetasklist': [], 'source': {}};
         }
         let promiseTask = [];
-        for (var i = request.data.length - 1; i >= 0; i--) {
+        request.data.map((req_url)=>{
             try{
-                var myRequest = new Request(request.data[i], myInit);
-                search_data[request.current]['tasklist'].push(0);
+                var myRequest = new Request(req_url, myInit);
                 let p = fetch(myRequest,myInit).then(function(response) {
+                    search_data[request.current]['tasklist'].push(0);
                     // console.log(response);
                     response.text().then(function(text) {
                     // console.log(text);
@@ -919,54 +919,62 @@ chrome.runtime.onMessage.addListener(
 
                     //遍历所有数据类型
                     for (var i = 0; i < key.length; i++) {
-                    //如果传入的数据没有这个类型，就看下一个
-                    if (tmp_data[key[i]] == null){
-                      continue;
-                    }
-                    // 把前端的处理放到这里避免重复
-                    if (not_sub_key.indexOf(key[i])<0){
-                      tmp_data[key[i]] = sub_1(tmp_data[key[i]])
-                    }
-                    //如果search_data有历史数据，进行检查
-                    if (tmp_data['current'] in search_data){
-                      for (var j = 0; j < key.length; j++) {
-                        if (search_data[tmp_data['current']][key[j]]!=null){
-                          tmp_data[key[i]] = jiaoji(unique(tmp_data[key[i]]),find(unique(tmp_data[key[i]]),search_data[tmp_data['current']][key[j]]))
+                        //如果传入的数据没有这个类型，就看下一个
+                        if (tmp_data[key[i]] == null){
+                          continue;
                         }
-                      }
-                    }
-                    if (tmp_data['current'] in search_data && search_data[tmp_data['current']][key[i]]!=null ){
-                      var search_data_value = unique(add(search_data[tmp_data['current']][key[i]],tmp_data[key[i]])).sort()
-                      if ('static' in search_data[tmp_data['current']]){
-                        var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
-                      }else{
-                        var res = collect_static(search_data_value,[])
-                      }
-                      search_data[tmp_data['current']][key[i]] = res['arr1']
-                      search_data[tmp_data['current']]['static'] = res['static']
-                    }else{
-                      var search_data_value = unique(tmp_data[key[i]]).sort()
-                      if ('static' in search_data[tmp_data['current']]){
-                        var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
-                      }else{
-                        var res = collect_static(search_data_value,[])
-                      }
-                      search_data[tmp_data['current']]['static'] = res['static']
-                      search_data[tmp_data['current']][key[i]] = res['arr1']
-                    }
+                        // 把前端的处理放到这里避免重复
+                        if (not_sub_key.indexOf(key[i])<0){
+                          tmp_data[key[i]] = sub_1(tmp_data[key[i]])
+                        }
+                        tmp_data[key[i]].map((item)=>{
+                            search_data[tmp_data['current']]['source'][item] = req_url
+                        })
+                        //如果search_data有历史数据，进行检查
+                        if (tmp_data['current'] in search_data){
+                          for (var j = 0; j < key.length; j++) {
+                            if (search_data[tmp_data['current']][key[j]]!=null){
+                              tmp_data[key[i]] = jiaoji(unique(tmp_data[key[i]]),find(unique(tmp_data[key[i]]),search_data[tmp_data['current']][key[j]]))
+                            }
+                          }
+                        }
+                        if (tmp_data['current'] in search_data && search_data[tmp_data['current']][key[i]]!=null ){
+                          var search_data_value = unique(add(search_data[tmp_data['current']][key[i]],tmp_data[key[i]])).sort()
+                          if ('static' in search_data[tmp_data['current']]){
+                            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
+                          }else{
+                            var res = collect_static(search_data_value,[])
+                          }
+                          search_data[tmp_data['current']][key[i]] = res['arr1']
+                          search_data[tmp_data['current']]['static'] = res['static']
+                        }else{
+                          var search_data_value = unique(tmp_data[key[i]]).sort()
+                          if ('static' in search_data[tmp_data['current']]){
+                            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
+                          }else{
+                            var res = collect_static(search_data_value,[])
+                          }
+                          search_data[tmp_data['current']]['static'] = res['static']
+                          search_data[tmp_data['current']][key[i]] = res['arr1']
+                        }
                     }
                     search_data[request.current]['donetasklist'].push(0);
                     tab_url[sender.tab.id] = request.current;
                     refresh_count();
                     chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                     });
-                }).catch(err=>{ console.log("fetch error",err)});
+                }).catch(err=>{
+                    console.log("fetch error",err);
+                    search_data[request.current]['donetasklist'].push(0);
+                    refresh_count();
+                    chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
+                });
                 promiseTask.push(p);
             }
             catch (e){
-                continue;
+                // console.log(e);
             }
-        }
+        });
         chrome.storage.local.get(["fetch_timeout"], function(settings){
             if(settings["fetch_timeout"] == true){
 
@@ -1007,16 +1015,18 @@ chrome.runtime.onMessage.addListener(
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, props) {
-  if (props.status == "complete" && tabId == selected_id)
-    refresh_count();
+    if (props.status == "complete" && tabId == selected_id)
+        refresh_count();
 });
 
 chrome.tabs.onActivated.addListener(function (activeInfo) {
-  selected_id = activeInfo.tabId;
-  refresh_count();
+    selected_id = activeInfo.tabId;
+    refresh_count();
 });
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-  selected_id = tabs[0].id;
-  refresh_count();
+    if(tabs && tabs[0]){
+        selected_id = tabs[0].id;
+        refresh_count();
+    }
 });
