@@ -7,38 +7,44 @@
     var source = document.getElementsByTagName('html')[0].innerHTML;
     var hostPath;
     var urlPath;
-    var urlWhiteList = ['google.com'];
+    var urlWhiteList = ['.google.com','.amazon.com','portswigger.net'];
     var target_list = [];
-    for(var i = 0;i < urlWhiteList.length;i++){
-        if(host.indexOf(urlWhiteList[i]) != -1){
-            return false;
-        }
-    }
-    target_list.push(window.location.href);
-
     var source_href = source.match(/href=['"].*?['"]/g);
     var source_src = source.match(/src=['"].*?['"]/g);
     var script_src = source.match(/<script [^><]*?src=['"].*?['"]/g);
-    // console.log(source_href,source_src,script_src)
-    if(source_href){
-        for(var i=0;i<source_href.length;i++){
-            var u = deal_url(source_href[i].substring(6,source_href[i].length-1));
-            if(u){
-                target_list.push(u);
+    browser.storage.local.get(["allowlist"], function(settings){
+        // console.log(settings , settings['allowlist'])
+        if(settings && settings['allowlist']){
+            urlWhiteList = settings['allowlist'];
+        }
+        for(var i = 0;i < urlWhiteList.length;i++){
+            if(host.endsWith(urlWhiteList[i])){
+                console.log('域名在白名单中，跳过当前页')
+                return ;
             }
         }
-    }
-    if(source_src){
-        for(var i=0;i<source_src.length;i++){
-            var u = deal_url(source_src[i].substring(5,source_src[i].length-1));
-            if(u){
-                target_list.push(u);
-            }
-        }
-    }
-    
-    browser.runtime.sendMessage({greeting: "find",data: target_list, current: href}, function(response) { });
+            target_list.push(window.location.href);
 
+        // console.log(source_href,source_src,script_src)
+        if(source_href){
+            for(var i=0;i<source_href.length;i++){
+                var u = deal_url(source_href[i].substring(6,source_href[i].length-1));
+                if(u){
+                    target_list.push(u);
+                }
+            }
+        }
+        if(source_src){
+            for(var i=0;i<source_src.length;i++){
+                var u = deal_url(source_src[i].substring(5,source_src[i].length-1));
+                if(u){
+                    target_list.push(u);
+                }
+            }
+        }
+
+        browser.runtime.sendMessage({greeting: "find",data: target_list, current: href}, function(response) { });
+    });
     function is_script(u){
         if(script_src){
             for(var i=0;i<script_src.length;i++){
@@ -311,19 +317,23 @@ browser.storage.local.get(["global_float"], function(settings){
     }
     function get_info() {
         browser.runtime.sendMessage({greeting: "get", current: window.location.href}, function(result_data) {
-            if(result_data == undefined || result_data['done']!='done' || result_data==null){
+            let taskstatus = document.getElementById('findsomething_taskstatus');
+            if(!taskstatus){
+                return;
+            }
+            if(!result_data|| result_data['done']!='done'){
                 // console.log('还未提取完成');
-                if(result_data != undefined || result_data!=null ){
+                if(result_data){
                     show_info(result_data);
-                    document.getElementById('findsomething_taskstatus').textContent = "处理中.."+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+                    taskstatus.textContent = "处理中.."+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
                 }else{
-                    document.getElementById('findsomething_taskstatus').textContent = "处理中..";
+                    taskstatus.textContent = "处理中..";
                 }
                 sleep(100);
                 get_info();
                 return;
             }
-            document.getElementById('findsomething_taskstatus').textContent = "处理完成："+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+            taskstatus.textContent = "处理完成："+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
             show_info(result_data);
             // 结果不一致继续刷新
             if(result_data['donetasklist'].length!=result_data['tasklist'].length){

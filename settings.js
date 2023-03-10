@@ -9,14 +9,28 @@ document.getElementById("save").onclick=function () {
 	browser.storage.local.set({"webhook_setting": webhook_setting});
 }
 document.getElementById("reset").onclick=function () {
-	// var webhook_setting = {};
+	let webhook_setting = {"url":"","arg":"","headers":{}};
 	document.getElementById('url').value = "";
 	document.getElementById('method').value = "GET";
 	document.getElementById('arg').value = "";
 	document.getElementById('headers').value = "{}";
-	let webhook_setting = {"url":"","method":"GET", "arg":"","headers":{}};
 	browser.storage.local.set({"webhook_setting": webhook_setting});
 	// console.log(webhook_setting);
+}
+
+document.getElementById("save_allowlist").onclick=function () {
+	snsArr = document.getElementById('allowlist').value.split(/[(\r\n)\r\n]+/);
+	snsArr.forEach((item, index)=>{
+		if(!item){
+			snsArr.splice(index,1);
+		}
+	})
+	// console.log(snsArr)
+	browser.storage.local.set({"allowlist": snsArr});
+}
+document.getElementById("reset_allowlist").onclick=function () {
+	document.getElementById('allowlist').value = "";
+	browser.storage.local.set({"allowlist": []});
 }
 
 document.getElementById("global_float").onclick=function () {
@@ -31,7 +45,7 @@ document.getElementById("global_float").onclick=function () {
 
 browser.storage.local.get(["webhook_setting"], function(settings){
 	// console.log(settings);
-	if(settings["webhook_setting"] == {}){
+	if(!settings || settings == {} || !settings["webhook_setting"] ){
         console.log('获取webhook_setting失败');
         return;
     }
@@ -44,3 +58,7 @@ browser.storage.local.get(["global_float"], function(settings){
 	document.getElementById('global_float').textContent = settings["global_float"]==true ? "已打开" : "已关闭";});
 browser.storage.local.get(["fetch_timeout"], function(settings){
 	document.getElementById('fetch_timeout').textContent = settings["fetch_timeout"]==true ? "已打开" : "已关闭";});
+browser.storage.local.get(["allowlist"], function(allowlist){
+	console.log(allowlist["allowlist"].join('\n'));
+	document.getElementById('allowlist').textContent = allowlist["allowlist"].join('\n');});
+
