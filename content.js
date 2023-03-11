@@ -102,42 +102,42 @@ chrome.storage.local.get(["global_float"], function(settings){
     const div = document.createElement('div');
     div.setAttribute("id","findsomething-float-div");
     div.innerHTML = `
-    <findsomething-div id="neko" style="width:410px;max-height:500px;font-size:14px;color:#000000;box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1) ;background-color: #fff;border-radius: 5px;border: 1px solid #ebebeb;left:20px;top:20px;position: fixed;z-index: 1000000;overflow:scroll;">
-          <findsomething-div id="neko-title" style="display: flex;justify-content: space-between;">
-            <findsomething-div id="taskstatus" style="height: 34px; line-height: 34px; margin-left: 10px;"></findsomething-div>
+    <findsomething-div id="findsomething_neko" style="width:410px;max-height:500px;font-size:14px;color:#000000;box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1) ;background-color: #fff;border-radius: 5px;border: 1px solid #ebebeb;left:20px;top:20px;position: fixed;z-index: 1000000;overflow:scroll;">
+          <findsomething-div id="findsomething_neko-title" style="display: flex;justify-content: space-between;">
+            <findsomething-div id="findsomething_taskstatus" style="height: 34px; line-height: 34px; margin-left: 10px;"></findsomething-div>
             <findsomething-div style="cursor: pointer;margin-top: 2px;margin-right: 10px;" onclick='(function(){document.getElementById("findsomething-float-div").removeChild(document.getElementById("neko"));})()'>隐藏</findsomething-div>
           </findsomething-div>
             <findsomething-div style="width: 300px; margin-top: 10px;">
                 <findsomething-div class="findsomething-title">IP<button type="button" class="finsomething_copy" name="ip">复制</button></findsomething-div>
-                <findsomething-p id="ip" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">IP_PORT<button class="finsomething_copy" name="ip_port">复制</button></findsomething-div>
-                <findsomething-p id="ip_port" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">域名<button class="finsomething_copy" name="domain">复制</button></findsomething-div>
-                <findsomething-p id="domain" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">身份证<button class="finsomething_copy" name="sfz">复制</button></findsomething-div>
-                <findsomething-p id="sfz" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">手机号<button class="finsomething_copy" name="mobile">复制</button></findsomething-div>
-                <findsomething-p id="mobile" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">邮箱<button class="finsomething_copy" name="mail">复制</button></findsomething-div>
-                <findsomething-p id="mail" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">JWT<button class="finsomething_copy" name="jwt">复制</button></findsomething-div>
-                <findsomething-p id="jwt" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">算法<button class="finsomething_copy" name="algorithm">复制</button></findsomething-div>
-                <findsomething-p id="algorithm" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">Secret<button class="finsomething_copy" name="secret">复制</button></findsomething-div>
-                <findsomething-p id="secret" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">Path<button class="finsomething_copy" name="path">复制</button></findsomething-div>
-                <findsomething-p id="path" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">IncompletePath<button class="finsomething_copy" name="incomplete_path">复制</button></findsomething-div>
-                <findsomething-p id="incomplete_path" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">Url<button class="finsomething_copy" name="url">复制</button></findsomething-div>
-                <findsomething-p id="url" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
-                <findsomething-div class="findsomething-title">StaticUrl<button class="finsomething_copy" name="static">复制</button></findsomething-div>
-                <findsomething-p id="static" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-p id="findsomething_ip" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">IP_PORT<button class="findsomething_copy" name="ip_port">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_ip_port" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">域名<button class="findsomething_copy" name="domain">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_domain" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">身份证<button class="findsomething_copy" name="sfz">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_sfz" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">手机号<button class="findsomething_copy" name="mobile">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_mobile" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">邮箱<button class="findsomething_copy" name="mail">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_mail" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">JWT<button class="findsomething_copy" name="jwt">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_jwt" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">算法<button class="findsomething_copy" name="algorithm">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_algorithm" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">Secret<button class="findsomething_copy" name="secret">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_secret" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">Path<button class="findsomething_copy" name="path">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_path" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">IncompletePath<button class="findsomething_copy" name="incomplete_path">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_incomplete_path" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">Url<button class="findsomething_copy" name="url">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_url" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
+                <findsomething-div class="findsomething-title">StaticUrl<button class="findsomething_copy" name="static">复制</button></findsomething-div>
+                <findsomething-p id="findsomething_static" style="word-break:break-word;margin-left:10px;">🈚️</findsomething-p>
             </findsomething-div>
     </findsomething-div>
         <style type="text/css">
-        .finsomething_copy {
+        .findsomething_copy {
             border-style: none;
             background-color: #ffffff;
             float: right;
@@ -171,7 +171,7 @@ chrome.storage.local.get(["global_float"], function(settings){
         </style>
         `
     body.appendChild(div)
-    var neko = document.querySelector('#neko');
+    var neko = document.querySelector('#findsomething_neko');
     var nekoW = neko.offsetWidth;
     var nekoH = neko.offsetHeight;
     var cuntW = 0;
@@ -198,7 +198,7 @@ chrome.storage.local.get(["global_float"], function(settings){
         obj.style.transform = ' rotate(' + a + ')'
     }
 
-    var nekotitle = document.querySelector('#neko-title');
+    var nekotitle = document.querySelector('#findsomething_neko-title');
     nekotitle.onmousedown = function (e) {
         var nekoL = e.clientX - neko.offsetLeft;
         var nekoT = e.clientY - neko.offsetTop;
@@ -273,7 +273,7 @@ chrome.storage.local.get(["global_float"], function(settings){
 });
 
 function init_copy() {
-    var elements = document.getElementsByClassName("finsomething_copy");
+    var elements = document.getElementsByClassName("findsomething_copy");
     if (elements) {
         for (var i=0, len=elements.length|0; i<len; i=i+1|0) {
             let ele_name = elements[i].name;
@@ -309,15 +309,15 @@ function show_info(result_data) {
                 for(var i in result_data[key[k]]){
                     p = p + result_data[key[k]][i] +'\n'
                 }
-                document.getElementById(key[k]).style.whiteSpace="pre";
-                document.getElementById(key[k]).textContent=p;
+                document.getElementById("findsomething_"+key[k]).style.whiteSpace="pre";
+                document.getElementById("findsomething_"+key[k]).textContent=p;
             }
         }
     }
 }
 function get_info() {
     chrome.runtime.sendMessage({greeting: "get", current: window.location.href}, function(result_data) {
-        let taskstatus = document.getElementById('taskstatus');
+        let taskstatus = document.getElementById('findsomething_taskstatus');
         if(!taskstatus){
             return;
         }
