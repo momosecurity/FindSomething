@@ -703,7 +703,8 @@ var nuclei_regex = [
     /["']?[\w_-]*?accesskey[\w_-]*?["']?[^\S\r\n]*[=:][^\S\r\n]*["']?[\w-]+["']?/gi,
     /["']?[\w_-]*?secret[\w_-]*?["']?[^\S\r\n]*[=:][^\S\r\n]*["']?[\w-]+["']?/gi,
     /["']?[\w_-]*?bucket[\w_-]*?["']?[^\S\r\n]*[=:][^\S\r\n]*["']?[\w-]+["']?/gi,
-    /["']?[\w_-]*?token[\w_-]*?["']?[^\S\r\n]*[=:][^\S\r\n]*["']?[\w-]+["']?/gi
+    /["']?[\w_-]*?token[\w_-]*?["']?[^\S\r\n]*[=:][^\S\r\n]*["']?[\w-]+["']?/gi,
+    /["']?[-]+BEGIN \w+ PRIVATE KEY[-]+/gi,
 ]
 var tab_url = {};
 var selected_id = -1;
@@ -738,6 +739,12 @@ function find(arr1,arr2) {
 }
 //去重合并两个数组 并集
 function add(arr1,arr2) {
+  if(!arr1){
+    return arr2
+  }
+  if(!arr2){
+    return arr1
+  }
   arr1.forEach(function (item,index,array) {
     if(arr2.indexOf(item)==-1){
       arr2.push(item)
@@ -774,7 +781,15 @@ function collect_static(arr1,arr2) {
 function sub_1(arr1) {
   var arr3 = []
   arr1.forEach(function (item,index,array) {
-    arr3.push(item.substring(1,item.length-1))
+    let start = 0
+    let end = 0
+    if(item.startsWith("'") || item.startsWith('"')){
+        start = 1
+    }
+    if(item.endsWith("'") || item.endsWith('"')){
+        end = 1
+    }
+    arr3.push(item.substring(start,item.length-end))
   })
   return arr3
 }
@@ -816,6 +831,13 @@ function extract_info(data) {
   // search_data['algorithm'] = data.match(/\WBase64\.encode\(|\WBase64\.decode\(|\Wbtoa\(|\Watob\(|\WCryptoJS\.AES\.|\WCryptoJS\.DES\.|\WJSEncrypt\(|\Wrsa\.|\WKJUR\.|\W$\.md5\(|\Wmd5\(|\Wsha1\(|\Wsha256\(|\Wsha512\(/gi);
   extract_data['algorithm'] = data.match(/\W(Base64\.encode|Base64\.decode|btoa|atob|CryptoJS\.AES|CryptoJS\.DES|JSEncrypt|rsa|KJUR|$\.md5|md5|sha1|sha256|sha512)[\(\.]/gi);
   extract_data['secret'] = get_secret(data);
+  if (extract_data['url']){
+        extract_data['url'].map((url)=>{
+        extract_data['ip'] = add(extract_data['ip'], url.match(/['"](([a-zA-Z0-9]+:)?\/\/)?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g))
+        extract_data['ip_port'] = add(extract_data['ip_port'], url.match(/['"](([a-zA-Z0-9]+:)?\/\/)?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\:\d{1,5}(\/.*?)?['"]/g))
+        extract_data['domain'] = add(extract_data['domain'], url.match(/['"](([a-zA-Z0-9]+:)?\/\/)?[a-zA-Z0-9\-\.]*?\.(xin|com|cn|net|com.cn|vip|top|cc|shop|club|wang|xyz|luxe|site|news|pub|fun|online|win|red|loan|ren|mom|net.cn|org|link|biz|bid|help|tech|date|mobi|so|me|tv|co|vc|pw|video|party|pics|website|store|ltd|ink|trade|live|wiki|space|gift|lol|work|band|info|click|photo|market|tel|social|press|game|kim|org.cn|games|pro|men|love|studio|rocks|asia|group|science|design|software|engineer|lawyer|fit|beer|我爱你|中国|公司|网络|在线|网址|网店|集团|中文网)(\:\d{1,5})?/g))
+      })
+  }
   return extract_data;
 }
 

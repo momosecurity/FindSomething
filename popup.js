@@ -58,21 +58,6 @@ function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-// 实体编码，防止xss
-function htmlEncodeByRegExp(str) {
-    var s = '';
-    if(str.length === 0) {
-        return '';
-    }
-    s = str.replace(/&/g,'&amp;');
-    s = s.replace(/</g,'&lt;');
-    s = s.replace(/>/g,'&gt;');
-    s = s.replace(/ /g,'&nbsp;');
-    s = s.replace(/\'/g,'&#39;');
-    s= s.replace(/\"/g,'&quot;');
-    return s;
-}
-
 function show_info(result_data) {
     for (var k in key){
         if (result_data[key[k]]){
@@ -83,8 +68,9 @@ function show_info(result_data) {
             }
             container.style.whiteSpace = "pre";
             for (var i in result_data[key[k]]){
+                let tips = document.createElement("div");
+                tips.setAttribute("class", "tips")
                 let link = document.createElement("a");
-                link.textContent = result_data[key[k]][i]+'\n';
                 let source = result_data['source'][result_data[key[k]][i]];
                 if (source) {
                     //虽然无法避免被xss，但插件默认提供了正确的CSP，这意味着我们即使不特殊处理，javascript也不会被执行。
@@ -92,8 +78,10 @@ function show_info(result_data) {
                     link.setAttribute("href", source);
                     link.setAttribute("title", source);
                 }
+                link.appendChild(tips);
                 let span = document.createElement("span");
-                span.appendChild(link);
+                span.textContent = result_data[key[k]][i]+'\n';
+                container.appendChild(link);
                 container.appendChild(span);
             }
         }
