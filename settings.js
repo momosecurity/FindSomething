@@ -55,10 +55,14 @@ browser.storage.local.get(["webhook_setting"], function(settings){
 	document.getElementById('headers').value = JSON.stringify(settings["webhook_setting"]['headers']);
 });
 browser.storage.local.get(["global_float"], function(settings){
-	document.getElementById('global_float').textContent = settings["global_float"]==true ? "已打开" : "已关闭";});
+	document.getElementById('global_float').textContent = settings["global_float"]==true ? "已打开" : "已关闭";
+});
 browser.storage.local.get(["fetch_timeout"], function(settings){
-	document.getElementById('fetch_timeout').textContent = settings["fetch_timeout"]==true ? "已打开" : "已关闭";});
+	document.getElementById('fetch_timeout').textContent = settings["fetch_timeout"]==true ? "已打开" : "已关闭";
+});
 browser.storage.local.get(["allowlist"], function(allowlist){
-	console.log(allowlist["allowlist"].join('\n'));
-	document.getElementById('allowlist').textContent = allowlist["allowlist"].join('\n');});
+	if(allowlist && allowlist["allowlist"]){
+		document.getElementById('allowlist').textContent = allowlist["allowlist"].join('\n');
+	}
+});
 

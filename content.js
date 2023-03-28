@@ -329,7 +329,7 @@ browser.storage.local.get(["global_float"], function(settings){
                 }else{
                     taskstatus.textContent = "处理中..";
                 }
-                sleep(100);
+                sleep(1000);
                 get_info();
                 return;
             }
