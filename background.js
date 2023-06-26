@@ -715,17 +715,23 @@ function get_js(){
 function add_js(js_name) {
 	js.push(js_name);
 }
-function unique(arr){
-  if(arr == 'null'){
+function unique(arr1){
+  if(arr1 == 'null'){
     return null;
   }
-  var array=[];
-  for (var i = 0;i<arr.length;i++){
-    if (array.indexOf(arr[i])===-1){
-      array.push(arr[i])
+  let arr2=[];
+  arr1.forEach(function (item,index,array) {
+    console.log(item, arr2.indexOf(item), arr2)
+    if(arr2.indexOf(item)==-1){
+      arr2.push(item)
     }
-  }
-  return array
+  })
+  // for (var i = 0;i<arr.length;i++){
+  //   if (array.indexOf(arr[i])===-1){
+  //     array.push(arr[i])
+  //   }
+  // }
+  return arr2
 }
 //查找search_data中是否已经存在了，如果已存在则不返回
 function find(arr1,arr2) {
@@ -770,8 +776,10 @@ function collect_static(arr1,arr2) {
   arr1.forEach(function (item,index,array) {
     for (var i = 0; i < static_file.length; i++) {
       if(item.indexOf(static_file[i])!=-1){
-        arr2.push(item)
         arr3.splice(arr3.indexOf(item),1)
+        if(arr2.indexOf(item)==-1){
+            arr2.push(item)
+        }
       }
     }
   })
@@ -905,6 +913,54 @@ function refresh_count() {
   chrome.action.setBadgeText({ text: "" + cnt });
 }
 
+function persist_tmp_data(tmp_data, req_url, current) {
+    //遍历所有数据类型
+    for (var i = 0; i < key.length; i++) {
+        //如果传入的数据没有这个类型，就看下一个
+        if (tmp_data[key[i]] == null){
+          continue;
+        }
+        // 把前端的处理放到这里避免重复
+        if (not_sub_key.indexOf(key[i])<0){
+          tmp_data[key[i]] = sub_1(tmp_data[key[i]])
+        }
+        tmp_data[key[i]].map((item)=>{
+            search_data[tmp_data['current']]['source'][item] = req_url
+        })
+        //如果search_data有历史数据，进行检查--20230625 这里没看懂，先注释看看
+        // console.log(tmp_data[key[i]])
+        // if (tmp_data['current'] in search_data){
+        //   for (var j = 0; j < key.length; j++) {
+        //     if (search_data[tmp_data['current']][key[j]]!=null){
+        //       tmp_data[key[i]] = jiaoji(unique(tmp_data[key[i]]),find(unique(tmp_data[key[i]]),search_data[tmp_data['current']][key[j]]))
+        //     }
+        //     // console.log(tmp_data[key[i]], search_data[tmp_data['current']][key[j]])
+        //   }
+        // }
+        // console.log(tmp_data[key[i]])
+        if (tmp_data['current'] in search_data && search_data[tmp_data['current']][key[i]]!=null ){
+          var search_data_value = unique(add(search_data[tmp_data['current']][key[i]],tmp_data[key[i]])).sort()
+          if ('static' in search_data[tmp_data['current']]){
+            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
+          }else{
+            var res = collect_static(search_data_value,[])
+          }
+          search_data[tmp_data['current']][key[i]] = res['arr1']
+          search_data[tmp_data['current']]['static'] = res['static']
+        }else{
+          var search_data_value = unique(tmp_data[key[i]]).sort()
+          if ('static' in search_data[tmp_data['current']]){
+            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
+          }else{
+            var res = collect_static(search_data_value,[])
+          }
+          search_data[tmp_data['current']]['static'] = unique(res['static'])
+          search_data[tmp_data['current']][key[i]] = unique(res['arr1'])
+        }
+    }
+
+}
+
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     var abort_controller = new AbortController();
@@ -926,64 +982,35 @@ chrome.runtime.onMessage.addListener(
         }else{
             search_data[request.current] = {'current':request.current, 'tasklist': [], 'donetasklist': [], 'source': {}};
         }
+        let tmp_data = extract_info(request.source);
+        tmp_data['current'] = request.current;
+        tmp_data['static'] = null;
+        console.log(tmp_data)
+        persist_tmp_data(tmp_data, request.current, request.current);
+        chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
+        tab_url[sender.tab.id] = request.current;
+        refresh_count();
         let promiseTask = [];
         request.data.map((req_url)=>{
             try{
+                if(req_url==request.current){
+                    return
+                }
                 var myRequest = new Request(req_url, myInit);
                 let p = fetch(myRequest,myInit).then(function(response) {
                     search_data[request.current]['tasklist'].push(0);
                     // console.log(response);
                     response.text().then(function(text) {
                     // console.log(text);
-                    var tmp_data=text;
+                    let tmp_data=text;
                     tmp_data = extract_info(tmp_data);
                     tmp_data['current'] = request.current;
-
-                    //遍历所有数据类型
-                    for (var i = 0; i < key.length; i++) {
-                        //如果传入的数据没有这个类型，就看下一个
-                        if (tmp_data[key[i]] == null){
-                          continue;
-                        }
-                        // 把前端的处理放到这里避免重复
-                        if (not_sub_key.indexOf(key[i])<0){
-                          tmp_data[key[i]] = sub_1(tmp_data[key[i]])
-                        }
-                        tmp_data[key[i]].map((item)=>{
-                            search_data[tmp_data['current']]['source'][item] = req_url
-                        })
-                        //如果search_data有历史数据，进行检查
-                        if (tmp_data['current'] in search_data){
-                          for (var j = 0; j < key.length; j++) {
-                            if (search_data[tmp_data['current']][key[j]]!=null){
-                              tmp_data[key[i]] = jiaoji(unique(tmp_data[key[i]]),find(unique(tmp_data[key[i]]),search_data[tmp_data['current']][key[j]]))
-                            }
-                          }
-                        }
-                        if (tmp_data['current'] in search_data && search_data[tmp_data['current']][key[i]]!=null ){
-                          var search_data_value = unique(add(search_data[tmp_data['current']][key[i]],tmp_data[key[i]])).sort()
-                          if ('static' in search_data[tmp_data['current']]){
-                            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
-                          }else{
-                            var res = collect_static(search_data_value,[])
-                          }
-                          search_data[tmp_data['current']][key[i]] = res['arr1']
-                          search_data[tmp_data['current']]['static'] = res['static']
-                        }else{
-                          var search_data_value = unique(tmp_data[key[i]]).sort()
-                          if ('static' in search_data[tmp_data['current']]){
-                            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
-                          }else{
-                            var res = collect_static(search_data_value,[])
-                          }
-                          search_data[tmp_data['current']]['static'] = res['static']
-                          search_data[tmp_data['current']][key[i]] = res['arr1']
-                        }
-                    }
+                    persist_tmp_data(tmp_data, req_url, request.current);
                     search_data[request.current]['donetasklist'].push(0);
+                    chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                     tab_url[sender.tab.id] = request.current;
                     refresh_count();
-                    chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
+
                     });
                 }).catch(err=>{
                     console.log("fetch error",err);
