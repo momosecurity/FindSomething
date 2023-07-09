@@ -721,7 +721,7 @@ function unique(arr1){
   }
   let arr2=[];
   arr1.forEach(function (item,index,array) {
-    console.log(item, arr2.indexOf(item), arr2)
+    // console.log(item, arr2.indexOf(item), arr2)
     if(arr2.indexOf(item)==-1){
       arr2.push(item)
     }
@@ -904,13 +904,20 @@ function refresh_count() {
   const cur = tab_url[selected_id];
   let cnt = 0;
   for (const k in search_data[cur]) {
-    if (k == "done" || k == "tasklist" || k == "donetasklist" || k == "current")
+    if (k == "done" || k == "tasklist" || k == "donetasklist" || k == "current" || k == "pretasknum")
       continue;
     const v = search_data[cur][k];
     if (v == "🈚️" || v == "") continue;
     cnt++;
   }
   chrome.action.setBadgeText({ text: "" + cnt });
+  if(search_data[cur] && search_data[cur]['donetasklist'] && search_data[cur]['pretasknum'] && search_data[cur]['donetasklist'].length==search_data[cur]['pretasknum']){
+    console.log(search_data[cur]['pretasknum'],search_data[cur]['donetasklist'].length,search_data[cur]['tasklist'].length)
+    search_data[cur]['done'] = 'done'
+    chrome.storage.local.set({["findsomething_result_"+cur]: search_data[cur]}, function(){});
+    webhook(cur);
+  }
+
 }
 
 function persist_tmp_data(tmp_data, req_url, current) {
@@ -991,14 +998,17 @@ chrome.runtime.onMessage.addListener(
         tab_url[sender.tab.id] = request.current;
         refresh_count();
         let promiseTask = [];
+        search_data[request.current]['pretasknum'] = request.data.length
         request.data.map((req_url)=>{
             try{
+                search_data[request.current]['tasklist'].push(0);
                 if(req_url==request.current){
+                    search_data[request.current]['donetasklist'].push(0);
                     return
                 }
                 var myRequest = new Request(req_url, myInit);
                 let p = fetch(myRequest,myInit).then(function(response) {
-                    search_data[request.current]['tasklist'].push(0);
+                    // search_data[request.current]['tasklist'].push(0);
                     // console.log(response);
                     response.text().then(function(text) {
                     // console.log(text);
@@ -1022,6 +1032,7 @@ chrome.runtime.onMessage.addListener(
             }
             catch (e){
                 // console.log(e);
+                search_data[request.current]['donetasklist'].push(0);
             }
         });
         chrome.storage.local.get(["fetch_timeout"], function(settings){
@@ -1036,8 +1047,8 @@ chrome.runtime.onMessage.addListener(
                 promiseTask.push(abort_promise)
 
                 Promise.race(promiseTask).then(function() {
-                        webhook(request.current);
-                        search_data[request.current]['done'] = 'done';
+                        // webhook(request.current);
+                        // search_data[request.current]['done'] = 'done';
                         // console.log(search_data[request.current])
                         refresh_count();
                         chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
@@ -1048,8 +1059,8 @@ chrome.runtime.onMessage.addListener(
 
             }else{
                 Promise.all(promiseTask).then(function() {
-                    webhook(request.current);
-                    search_data[request.current]['done'] = 'done';
+                    // webhook(request.current);
+                    // search_data[request.current]['done'] = 'done';
                     // console.log(search_data[request.current])
                     refresh_count();
                     chrome.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
