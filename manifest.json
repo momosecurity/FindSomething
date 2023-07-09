@@ -1,6 +1,6 @@
 {
   "name": "FindSomething",
-  "version": "2.0.15",
+  "version": "2.0.16",
   "manifest_version": 3,
   "description": "在网页的源代码或js中找到一些有趣的东西",  
   "permissions": [     
