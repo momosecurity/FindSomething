@@ -715,17 +715,23 @@ function get_js(){
 function add_js(js_name) {
     js.push(js_name);
 }
-function unique(arr){
-  if(arr == 'null'){
+function unique(arr1){
+  if(arr1 == 'null'){
     return null;
   }
-  var array=[];
-  for (var i = 0;i<arr.length;i++){
-    if (array.indexOf(arr[i])===-1){
-      array.push(arr[i])
+  let arr2=[];
+  arr1.forEach(function (item,index,array) {
+    // console.log(item, arr2.indexOf(item), arr2)
+    if(arr2.indexOf(item)==-1){
+      arr2.push(item)
     }
-  }
-  return array
+  })
+  // for (var i = 0;i<arr.length;i++){
+  //   if (array.indexOf(arr[i])===-1){
+  //     array.push(arr[i])
+  //   }
+  // }
+  return arr2
 }
 //查找search_data中是否已经存在了，如果已存在则不返回
 function find(arr1,arr2) {
@@ -770,8 +776,10 @@ function collect_static(arr1,arr2) {
   arr1.forEach(function (item,index,array) {
     for (var i = 0; i < static_file.length; i++) {
       if(item.indexOf(static_file[i])!=-1){
-        arr2.push(item)
         arr3.splice(arr3.indexOf(item),1)
+        if(arr2.indexOf(item)==-1){
+            arr2.push(item)
+        }
       }
     }
   })
@@ -896,13 +904,68 @@ function refresh_count() {
   const cur = tab_url[selected_id];
   let cnt = 0;
   for (const k in search_data[cur]) {
-    if (k == "done" || k == "tasklist" || k == "donetasklist" || k == "current")
+    if (k == "done" || k == "tasklist" || k == "donetasklist" || k == "current" || k == "pretasknum")
       continue;
     const v = search_data[cur][k];
     if (v == "🈚️" || v == "") continue;
     cnt++;
   }
   browser.browserAction.setBadgeText({ text: "" + cnt });
+  if(search_data[cur] && search_data[cur]['donetasklist'] && search_data[cur]['pretasknum'] && search_data[cur]['donetasklist'].length==search_data[cur]['pretasknum']){
+    // console.log(search_data[cur]['pretasknum'],search_data[cur]['donetasklist'].length,search_data[cur]['tasklist'].length)
+    search_data[cur]['done'] = 'done'
+    browser.storage.local.set({["findsomething_result_"+cur]: search_data[cur]}, function(){});
+    webhook(cur);
+  }
+
+}
+
+function persist_tmp_data(tmp_data, req_url, current) {
+    //遍历所有数据类型
+    for (var i = 0; i < key.length; i++) {
+        //如果传入的数据没有这个类型，就看下一个
+        if (tmp_data[key[i]] == null){
+          continue;
+        }
+        // 把前端的处理放到这里避免重复
+        if (not_sub_key.indexOf(key[i])<0){
+          tmp_data[key[i]] = sub_1(tmp_data[key[i]])
+        }
+        tmp_data[key[i]].map((item)=>{
+            search_data[tmp_data['current']]['source'][item] = req_url
+        })
+        //如果search_data有历史数据，进行检查--20230625 这里没看懂，先注释看看
+        // console.log(tmp_data[key[i]])
+        // if (tmp_data['current'] in search_data){
+        //   for (var j = 0; j < key.length; j++) {
+        //     if (search_data[tmp_data['current']][key[j]]!=null){
+        //       tmp_data[key[i]] = jiaoji(unique(tmp_data[key[i]]),find(unique(tmp_data[key[i]]),search_data[tmp_data['current']][key[j]]))
+        //     }
+        //     // console.log(tmp_data[key[i]], search_data[tmp_data['current']][key[j]])
+        //   }
+        // }
+        // console.log(tmp_data[key[i]])
+        if (tmp_data['current'] in search_data && search_data[tmp_data['current']][key[i]]!=null ){
+          var search_data_value = unique(add(search_data[tmp_data['current']][key[i]],tmp_data[key[i]])).sort()
+          if ('static' in search_data[tmp_data['current']]){
+            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
+          }else{
+            var res = collect_static(search_data_value,[])
+          }
+          search_data[tmp_data['current']][key[i]] = res['arr1']
+          search_data[tmp_data['current']]['static'] = res['static']
+        }else{
+          var search_data_value = unique(tmp_data[key[i]]).sort()
+          if ('static' in search_data[tmp_data['current']]){
+            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
+          }else{
+            var res = collect_static(search_data_value,[])
+          }
+          search_data[tmp_data['current']]['static'] = unique(res['static'])
+          search_data[tmp_data['current']][key[i]] = unique(res['arr1'])
+        }
+    }
+
 }
 
 browser.runtime.onMessage.addListener(
@@ -926,64 +989,37 @@ browser.runtime.onMessage.addListener(
         }else{
             search_data[request.current] = {'current':request.current, 'tasklist': [], 'donetasklist': [], 'source': {}};
         }
+        let tmp_data = extract_info(request.source);
+        tmp_data['current'] = request.current;
+        tmp_data['static'] = null;
+        // console.log(tmp_data)
+        persist_tmp_data(tmp_data, request.current, request.current);
+        browser.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
+        tab_url[sender.tab.id] = request.current;
+        refresh_count();
         let promiseTask = [];
+        search_data[request.current]['pretasknum'] = request.data.length
         request.data.map((req_url)=>{
             try{
+                search_data[request.current]['tasklist'].push(0);
+                if(req_url==request.current){
+                    search_data[request.current]['donetasklist'].push(0);
+                    return
+                }
                 var myRequest = new Request(req_url, myInit);
                 let p = fetch(myRequest,myInit).then(function(response) {
-                    search_data[request.current]['tasklist'].push(0);
+                    // search_data[request.current]['tasklist'].push(0);
                     // console.log(response);
                     response.text().then(function(text) {
                     // console.log(text);
-                    var tmp_data=text;
+                    let tmp_data=text;
                     tmp_data = extract_info(tmp_data);
                     tmp_data['current'] = request.current;
-
-                    //遍历所有数据类型
-                    for (var i = 0; i < key.length; i++) {
-                        //如果传入的数据没有这个类型，就看下一个
-                        if (tmp_data[key[i]] == null){
-                          continue;
-                        }
-                        // 把前端的处理放到这里避免重复
-                        if (not_sub_key.indexOf(key[i])<0){
-                          tmp_data[key[i]] = sub_1(tmp_data[key[i]])
-                        }
-                        tmp_data[key[i]].map((item)=>{
-                            search_data[tmp_data['current']]['source'][item] = req_url
-                        })
-                        //如果search_data有历史数据，进行检查
-                        if (tmp_data['current'] in search_data){
-                          for (var j = 0; j < key.length; j++) {
-                            if (search_data[tmp_data['current']][key[j]]!=null){
-                              tmp_data[key[i]] = jiaoji(unique(tmp_data[key[i]]),find(unique(tmp_data[key[i]]),search_data[tmp_data['current']][key[j]]))
-                            }
-                          }
-                        }
-                        if (tmp_data['current'] in search_data && search_data[tmp_data['current']][key[i]]!=null ){
-                          var search_data_value = unique(add(search_data[tmp_data['current']][key[i]],tmp_data[key[i]])).sort()
-                          if ('static' in search_data[tmp_data['current']]){
-                            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
-                          }else{
-                            var res = collect_static(search_data_value,[])
-                          }
-                          search_data[tmp_data['current']][key[i]] = res['arr1']
-                          search_data[tmp_data['current']]['static'] = res['static']
-                        }else{
-                          var search_data_value = unique(tmp_data[key[i]]).sort()
-                          if ('static' in search_data[tmp_data['current']]){
-                            var res = collect_static(search_data_value,search_data[tmp_data['current']]['static'])
-                          }else{
-                            var res = collect_static(search_data_value,[])
-                          }
-                          search_data[tmp_data['current']]['static'] = res['static']
-                          search_data[tmp_data['current']][key[i]] = res['arr1']
-                      }
-                    }
+                    persist_tmp_data(tmp_data, req_url, request.current);
                     search_data[request.current]['donetasklist'].push(0);
+                    browser.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                     tab_url[sender.tab.id] = request.current;
                     refresh_count();
-                    browser.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
                     });
                 }).catch(err=>{
                     console.log("fetch error",err);
@@ -995,6 +1031,7 @@ browser.runtime.onMessage.addListener(
             }
             catch (e){
                 // console.log(e);
+                search_data[request.current]['donetasklist'].push(0);
             }
         });
         browser.storage.local.get(["fetch_timeout"], function(settings){
@@ -1008,8 +1045,8 @@ browser.runtime.onMessage.addListener(
                 promiseTask.push(abort_promise)
 
                 Promise.race(promiseTask).then(function() {
-                        webhook(request.current);
-                        search_data[request.current]['done'] = 'done';
+                        // webhook(request.current);
+                        // search_data[request.current]['done'] = 'done';
                         // console.log(search_data[request.current])
                         refresh_count();
                         browser.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
@@ -1020,8 +1057,8 @@ browser.runtime.onMessage.addListener(
 
             }else{
                 Promise.all(promiseTask).then(function() {
-                    webhook(request.current);
-                    search_data[request.current]['done'] = 'done';
+                    // webhook(request.current);
+                    // search_data[request.current]['done'] = 'done';
                     // console.log(search_data[request.current])
                     refresh_count();
                     browser.storage.local.set({["findsomething_result_"+request.current]: search_data[request.current]}, function(){});
