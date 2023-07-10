@@ -3,8 +3,10 @@
 (function(){
     var protocol = window.location.protocol;
     var host = window.location.host;
+    var domain_host = host.split(':')[0];
     var href = window.location.href;
-    var source = document.getElementsByTagName('html')[0].innerHTML;
+    // var source = document.getElementsByTagName('html')[0].innerHTML;
+    var source = document.documentElement.outerHTML;
     var hostPath;
     var urlPath;
     var urlWhiteList = ['.google.com','.amazon.com','portswigger.net'];
@@ -18,12 +20,12 @@
             urlWhiteList = settings['allowlist'];
         }
         for(var i = 0;i < urlWhiteList.length;i++){
-            if(host.endsWith(urlWhiteList[i])){
+            if(host.endsWith(urlWhiteList[i]) || domain_host.endsWith(urlWhiteList[i])){
                 console.log('域名在白名单中，跳过当前页')
                 return ;
             }
         }
-            target_list.push(window.location.href);
+        // target_list.push(window.location.href);
 
         // console.log(source_href,source_src,script_src)
         if(source_href){
@@ -43,7 +45,14 @@
             }
         }
 
-        browser.runtime.sendMessage({greeting: "find",data: target_list, current: href}, function(response) { });
+        const tmp_target_list=[];
+        for (var i = 0;i<target_list.length;i++){
+            if (tmp_target_list.indexOf(target_list[i])===-1){
+              tmp_target_list.push(target_list[i])
+            }
+        }
+        tmp_target_list.pop(href)
+        browser.runtime.sendMessage({greeting: "find",data: target_list, current: href, source: source});
     });
     function is_script(u){
         if(script_src){
