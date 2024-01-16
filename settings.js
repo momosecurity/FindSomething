@@ -32,6 +32,12 @@ document.getElementById("reset_allowlist").onclick=function () {
 	chrome.storage.local.set({"allowlist": []});
 }
 
+document.getElementById("clear_localStorage").onclick=function () {
+	chrome.storage.local.clear();
+	console.log("清理完成");
+	alert("清理完成");
+}
+
 document.getElementById("global_float").onclick=function () {
 	// var webhook_setting = {};
 	chrome.storage.local.get(["global_float"], function(settings){
