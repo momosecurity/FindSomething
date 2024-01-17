@@ -6,7 +6,7 @@
         if(!expire_index) {
             return 
         }
-        console.log(expire_index)
+        // console.log(expire_index)
         const today = new Date();
         const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
         const sevenDaysAgostr = sevenDaysAgo.toLocaleDateString('cn', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '');
