@@ -929,6 +929,9 @@ function refresh_storage_expire_index(cur) {
   console.log("refresh_storage_expire_index:"+cur)
   chrome.storage.local.get(["expire_index"], function(expire_index){
     expire_index = expire_index["expire_index"]
+    if(!expire_index){
+      expire_index = {}
+    }
     const today = new Date();
     const todaystr = today.toLocaleDateString('cn', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '');
     expire_index[cur]=todaystr;
