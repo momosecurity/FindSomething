@@ -1,6 +1,31 @@
 // @Date    : 2020-09-12 16:26:48
 // @Author  : residuallaugh
 (function(){
+    chrome.storage.local.get(["expire_index"], function(expire_index){
+        expire_index=expire_index["expire_index"]
+        if(!expire_index) {
+            return 
+        }
+        // console.log(expire_index)
+        const today = new Date();
+        const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const sevenDaysAgostr = sevenDaysAgo.toLocaleDateString('cn', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '');
+        let reset = false;
+        Object.keys(expire_index).forEach(key => {
+            // console.log("正在遍历索引"+key+"，日期是："+expire_index[key])
+            if (expire_index[key]<sevenDaysAgostr) {
+                reset=true
+                delete expire_index[key]
+                // console.log("这个url已经过期了，"+key+"之前的时间是"+expire_index[key])
+                chrome.storage.local.remove(["findsomething_result_"+key], function() {});
+            }
+        });
+        if(reset){
+            // console.log("重新设置expire_index：")
+            // console.log(expire_index)
+            chrome.storage.local.set({["expire_index"]: expire_index}, function(){} )
+        }
+    })
     var protocol = window.location.protocol;
     var host = window.location.host;
     var domain_host = host.split(':')[0];
