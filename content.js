@@ -1,125 +1,116 @@
 // @Date    : 2020-09-12 16:26:48
 // @Author  : residuallaugh
 (function(){
-    chrome.storage.local.get(["expire_index"], function(expire_index){
-        expire_index=expire_index["expire_index"]
-        if(!expire_index) {
-            return 
-        }
-        // console.log(expire_index)
-        const today = new Date();
-        const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-        const sevenDaysAgostr = sevenDaysAgo.toLocaleDateString('cn', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '');
-        let reset = false;
-        Object.keys(expire_index).forEach(key => {
-            // console.log("正在遍历索引"+key+"，日期是："+expire_index[key])
-            if (expire_index[key]<sevenDaysAgostr) {
-                reset=true
-                delete expire_index[key]
-                // console.log("这个url已经过期了，"+key+"之前的时间是"+expire_index[key])
-                chrome.storage.local.remove(["findsomething_result_"+key], function() {});
-            }
-        });
-        if(reset){
-            // console.log("重新设置expire_index：")
-            // console.log(expire_index)
-            chrome.storage.local.set({["expire_index"]: expire_index}, function(){} )
-        }
-    })
     var protocol = window.location.protocol;
     var host = window.location.host;
     var domain_host = host.split(':')[0];
     var href = window.location.href;
     // var source = document.getElementsByTagName('html')[0].innerHTML;
     var source = document.documentElement.outerHTML;
-    var hostPath;
-    var urlPath;
-    var urlWhiteList = ['.google.com','.amazon.com','portswigger.net'];
-    var target_list = [];
-    var source_href = source.match(/href=['"].*?['"]/g);
-    var source_src = source.match(/src=['"].*?['"]/g);
-    var script_src = source.match(/<script [^><]*?src=['"].*?['"]/g);
-    chrome.storage.local.get(["allowlist"], function(settings){
-        // console.log(settings , settings['allowlist'])
-        if(settings && settings['allowlist']){
-            urlWhiteList = settings['allowlist'];
-        }
-        for(var i = 0;i < urlWhiteList.length;i++){
-            if(host.endsWith(urlWhiteList[i]) || domain_host.endsWith(urlWhiteList[i])){
-                console.log('域名在白名单中，跳过当前页')
-                return ;
-            }
-        }
-        // target_list.push(window.location.href);
-        
-        // console.log(source_href,source_src,script_src)
-        if(source_href){
-            for(var i=0;i<source_href.length;i++){
-                var u = deal_url(source_href[i].substring(6,source_href[i].length-1));
-                if(u){
-                    target_list.push(u);
-                }
-            }
-        }
-        if(source_src){
-            for(var i=0;i<source_src.length;i++){
-                var u = deal_url(source_src[i].substring(5,source_src[i].length-1));
-                if(u){
-                    target_list.push(u);
-                }
-            }
-        }
-        
-        const tmp_target_list=[];
-        for (var i = 0;i<target_list.length;i++){
-            if (tmp_target_list.indexOf(target_list[i])===-1){
-              tmp_target_list.push(target_list[i])
-            }
-        }
-        tmp_target_list.pop(href)
-        chrome.runtime.sendMessage({greeting: "find",data: target_list, current: href, source: source});
-    });
-    function is_script(u){
-        if(script_src){
-            for(var i=0;i<script_src.length;i++){
-                if (script_src[i].indexOf(u)>0){
-                    return true
-                }
-            }
-        }
-        return false
-    }
+    init_source(source);
 
-    function deal_url(u){
-        if(u.indexOf(".js")=='-1' && !is_script(u)){
-            return ;
-        }else if(u.substring(0,4)=="http"){
-            return u;
-        }
-        else if(u.substring(0,2)=="//"){
-            return protocol+u;
-        }
-        else if(u.substring(0,1)=='/'){
-            return protocol+'//'+host+u;
-        }
-        else if(u.substring(0,2)=='./'){
-            if (href.indexOf('#')>0) {
-                tmp_href = href.substring(0,href.indexOf('#'))
-            }else{
-                tmp_href = href;
+    // 获取页面中所有的 iframe 元素，执行同样的逻辑
+    var iframes = document.querySelectorAll('iframe');
+    iframes.forEach(function(iframe) {
+        iframe.addEventListener('load', function() {
+            var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+            source = iframeDocument.documentElement.outerHTML
+            // console.log(iframeDocument.documentElement.outerHTML);
+            init_source(source);
+        });
+    });
+
+    function init_source(source) {
+        var hostPath;
+        var urlPath;
+        var urlWhiteList = ['.google.com','.amazon.com','portswigger.net'];
+        var target_list = [];
+        // console.log(source)
+        var source_href = source.match(/href=['"].*?['"]/g);
+        var source_src = source.match(/src=['"].*?['"]/g);
+        var script_src = source.match(/<script [^><]*?src=['"].*?['"]/g);
+        chrome.storage.local.get(["allowlist"], function(settings){
+            // console.log(settings , settings['allowlist'])
+            if(settings && settings['allowlist']){
+                urlWhiteList = settings['allowlist'];
             }
-            return tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
-        }else{
-            // console.log("not match prefix:"+u+",like http // / ./")
-            if (href.indexOf('#')>0) {
-                tmp_href = href.substring(0,href.indexOf('#'))
-            }else{
-                tmp_href = href;
+            for(var i = 0;i < urlWhiteList.length;i++){
+                if(host.endsWith(urlWhiteList[i]) || domain_host.endsWith(urlWhiteList[i])){
+                    console.log('域名在白名单中，跳过当前页')
+                    return ;
+                }
             }
-            return tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
+            // target_list.push(window.location.href);
+            
+            // console.log(source_href,source_src,script_src)
+            if(source_href){
+                for(var i=0;i<source_href.length;i++){
+                    var u = deal_url(source_href[i].substring(6,source_href[i].length-1));
+                    if(u){
+                        target_list.push(u);
+                    }
+                }
+            }
+            if(source_src){
+                for(var i=0;i<source_src.length;i++){
+                    var u = deal_url(source_src[i].substring(5,source_src[i].length-1));
+                    if(u){
+                        target_list.push(u);
+                    }
+                }
+            }
+            
+            const tmp_target_list=[];
+            for (var i = 0;i<target_list.length;i++){
+                if (tmp_target_list.indexOf(target_list[i])===-1){
+                  tmp_target_list.push(target_list[i])
+                }
+            }
+            tmp_target_list.pop(href)
+            chrome.runtime.sendMessage({greeting: "find",data: target_list, current: href, source: source});
+        });
+    
+        function is_script(u){
+            if(script_src){
+                for(var i=0;i<script_src.length;i++){
+                    if (script_src[i].indexOf(u)>0){
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+
+        function deal_url(u){
+            if(u.indexOf(".js")=='-1' && !is_script(u)){
+                return ;
+            }else if(u.substring(0,4)=="http"){
+                return u;
+            }
+            else if(u.substring(0,2)=="//"){
+                return protocol+u;
+            }
+            else if(u.substring(0,1)=='/'){
+                return protocol+'//'+host+u;
+            }
+            else if(u.substring(0,2)=='./'){
+                if (href.indexOf('#')>0) {
+                    tmp_href = href.substring(0,href.indexOf('#'))
+                }else{
+                    tmp_href = href;
+                }
+                return tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
+            }else{
+                // console.log("not match prefix:"+u+",like http // / ./")
+                if (href.indexOf('#')>0) {
+                    tmp_href = href.substring(0,href.indexOf('#'))
+                }else{
+                    tmp_href = href;
+                }
+                return tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
+            }
         }
     }
-    
 
 })()
 
