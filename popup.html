@@ -9,39 +9,39 @@
 </head>
 <body style="width:780px; font-size: 14px;">
     <div style="width:780px; height: 30px; margin-left: 15px;">
-        <a href="popup.html"><div style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #000000; color: #ffffff; border: 1px solid black;border-radius: 2px 0px 0px 2px;">主页</div></a>
-        <a href="settings.html"><div style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #ffffff; color: #000000; border: 1px solid black;border-radius: 0px 2px 2px 0px;">配置</div></a>
+        <a href="popup.html"><div id="Zhuye" style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #000000; color: #ffffff; border: 1px solid black;border-radius: 2px 0px 0px 2px;">主页</div></a>
+        <a href="settings.html"><div id="Peizhi" style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #ffffff; color: #000000; border: 1px solid black;border-radius: 0px 2px 2px 0px;">配置</div></a>
     </div>
     <div style="width:780px; height: 800px; margin-left: 15px;">
         <div id="taskstatus" style="height: 34px; line-height: 34px;"></div>
         <div style="width: 256px; float: left; border-right: 1px solid #e8e8e8;">
-            <div class="findsomething_title">IP<button type="button" class="copy" name="ip">复制</button></div>
+            <div class="findsomething_title" id="popupIp">IP</div><button type="button" class="copy" name="ip">复制</button>
             <p id="ip" style="word-break:break-word;">🈚️</p>
-            <div class="findsomething_title">IP_PORT<button class="copy" name="ip_port">复制</button></div>
+            <div class="findsomething_title" id="popupIpPort">IP_PORT</div><button class="copy" name="ip_port">复制</button>
             <p id="ip_port" style="word-break:break-word;">🈚️</p>
-            <div class="findsomething_title">域名<button class="copy" name="domain">复制</button></div>
+            <div class="findsomething_title" id="popupDomain">域名</div><button class="copy" name="domain">复制</button>
             <p id="domain" style="word-break:break-word;">🈚️</p>
-            <div class="findsomething_title">身份证<button class="copy" name="sfz">复制</button></div>
+            <div class="findsomething_title" id="popupSfz">身份证</div><button class="copy" name="sfz">复制</button>
             <p id="sfz" style="">🈚️</p>
-            <div class="findsomething_title">手机号<button class="copy" name="mobile">复制</button></div>
+            <div class="findsomething_title" id="popupMobile">手机号</div><button class="copy" name="mobile">复制</button>
             <p id="mobile" style="">🈚️</p>
-            <div class="findsomething_title">邮箱<button class="copy" name="mail">复制</button></div>
+            <div class="findsomething_title" id="popupMail">邮箱</div><button class="copy" name="mail">复制</button>
             <p id="mail" style="">🈚️</p>
-            <div class="findsomething_title">JWT<button class="copy" name="jwt">复制</button></div>
+            <div class="findsomething_title" id="popupJwt">JWT<button class="copy" name="jwt">复制</button></div>
             <p id="jwt" style="word-break:break-word;">🈚️</p>
-            <div class="findsomething_title">算法<button class="copy" name="algorithm">复制</button></div>
+            <div class="findsomething_title" id="popupAlgorithm">算法</div><button class="copy" name="algorithm">复制</button>
             <p id="algorithm" style="">🈚️</p>
-            <div class="findsomething_title">Secret<button class="copy" name="secret">复制</button></div>
+            <div class="findsomething_title" id="popupSecret">Secret</div><button class="copy" name="secret">复制</button>
             <p id="secret" style="">🈚️</p>
         </div>
         <div style="width: 480px; height: 800px; float: left; margin-left:16px;">
-            <div class="findsomething_title">Path<button id="path_button" class="copy" name="path">复制</button><button id="path_url_button" class="copy" name="path">复制URL</button></div>
+            <div class="findsomething_title" id="popupPath">Path</div><button id="path_button" class="copy" name="path">复制</button><button id="popupCopyurl" class="copy" name="path">复制URL</button>
             <p id="path" style="">🈚️</p>
-            <div class="findsomething_title">IncompletePath<button class="copy" name="incomplete_path">复制</button></div>
+            <div class="findsomething_title" id="popupIncompletePath">IncompletePath</div><button class="copy" name="incomplete_path">复制</button>
             <p id="incomplete_path" style="">🈚️</p>
-            <div class="findsomething_title">Url<button class="copy" name="url">复制</button></div>
+            <div class="findsomething_title" id="popupUrl">Url</div><button class="copy" name="url">复制</button>
             <p id="url" style="">🈚️</p>
-            <div class="findsomething_title">StaticUrl<button class="copy" name="static">复制</button></div>
+            <div class="findsomething_title" id="popupStaticPath">StaticUrl</div><button class="copy" name="static">复制</button>
             <p id="static" style="">🈚️</p>
         </div>
 </div>
@@ -54,6 +54,7 @@
         background-color: #ffffff;
         float: right;
         margin-right: 16px;
+        
     }
     .findsomething_title {
         font-size: 16px;

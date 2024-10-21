@@ -1,0 +1,154 @@
+{
+    "extName": {
+        "message": "FindSomething",
+        "description": "اسم الإضافة"
+    },
+    "extDescription": {
+        "message": "العثور على أشياء مثيرة للاهتمام في كود المصدر أو JavaScript للصفحة",
+        "description": "وصف الإضافة"
+    },
+    "Zhuye": {
+        "message": "الرئيسية",
+        "description": "الصفحة الرئيسية للنافذة المنبثقة"
+    },
+    "Peizhi": {
+        "message": "الإعدادات",
+        "description": "صفحة الإعدادات للنافذة المنبثقة"
+    },
+    "popupCopy": {
+        "message": "نسخ",
+        "description": "زر النسخ في الصفحة المنبثقة"
+    },
+    "popupCopyurl": {
+        "message": "نسخ الرابط",
+        "description": "زر نسخ الرابط في الصفحة المنبثقة"
+    },
+    "popupIp": {
+        "message": "الآي بي",
+        "description": "عنوان في الصفحة المنبثقة: الآي بي"
+    },
+    "popupIpPort": {
+        "message": "الآي بي والمنفذ",
+        "description": "عنوان في الصفحة المنبثقة: الآي بي والمنفذ"
+    },
+    "popupDomain": {
+        "message": "النطاق",
+        "description": "عنوان في الصفحة المنبثقة: النطاق"
+    },
+    "popupSfz": {
+        "message": "بطاقة الهوية",
+        "description": "عنوان في الصفحة المنبثقة: بطاقة الهوية"
+    },
+    "popupMobile": {
+        "message": "رقم الهاتف المحمول",
+        "description": "عنوان في الصفحة المنبثقة: رقم الهاتف المحمول"
+    },
+    "popupMail": {
+        "message": "البريد الإلكتروني",
+        "description": "عنوان في الصفحة المنبثقة: البريد الإلكتروني"
+    },
+    "popupJwt": {
+        "message": "JWT",
+        "description": "عنوان في الصفحة المنبثقة: JWT"
+    },
+    "popupAlgorithm": {
+        "message": "الخوارزمية",
+        "description": "عنوان في الصفحة المنبثقة: الخوارزمية"
+    },
+    "popupSecret": {
+        "message": "معلومات حساسة",
+        "description": "عنوان في الصفحة المنبثقة: معلومات حساسة"
+    },
+    "popupPath": {
+        "message": "المسار",
+        "description": "عنوان في الصفحة المنبثقة: المسار"
+    },
+    "popupIncompletePath": {
+        "message": "مسار غير كامل",
+        "description": "عنوان في الصفحة المنبثقة: مسار غير كامل"
+    },
+    "popupUrl": {
+        "message": "الرابط",
+        "description": "عنوان في الصفحة المنبثقة: الرابط"
+    },
+    "popupStaticPath": {
+        "message": "مسار ثابت",
+        "description": "عنوان في الصفحة المنبثقة: مسار ثابت"
+    },
+    "popupProcessing": {
+        "message": "جاري المعالجة...",
+        "description": "تلميح التقدم في الصفحة المنبثقة: جاري المعالجة"
+    },
+    "popupComplete": {
+        "message": "اكتملت المعالجة:",
+        "description": "تلميح التقدم في الصفحة المنبثقة: اكتملت المعالجة"
+    },
+    "popupTipClickBeforeCopy": {
+        "message": "الرجاء النقر على الصفحة الأصلية قبل النسخ :)",
+        "description": "تلميح النسخ في الصفحة المنبثقة عند حدوث خطأ"
+    },
+    "settingClearCache": {
+        "message": "مسح الذاكرة المؤقتة",
+        "description": "عنوان في صفحة الإعدادات: مسح الذاكرة المؤقتة"
+    },
+    "settingClearLocalStorage": {
+        "message": "مسح",
+        "description": "زر في صفحة الإعدادات: مسح"
+    },
+    "settingClearComplete": {
+        "message": "اكتمل المسح",
+        "description": "تلميح في صفحة الإعدادات: اكتمل المسح"
+    },
+    "settingClosed": {
+        "message": "مغلق",
+        "description": "زر في صفحة الإعدادات: مغلق"
+    },
+    "settingOpened": {
+        "message": "مفتوح",
+        "description": "زر في صفحة الإعدادات: مفتوح"
+    },
+    "settingGlobalFloatingWindow": {
+        "message": "نافذة عائمة عالمية",
+        "description": "عنوان في صفحة الإعدادات: نافذة عائمة عالمية"
+    },
+    "settingAutoTimeout": {
+        "message": "المهلة التلقائية",
+        "description": "عنوان في صفحة الإعدادات: المهلة التلقائية"
+    },
+    "settingWebhook": {
+        "message": "Webhook",
+        "description": "عنوان في صفحة الإعدادات: Webhook"
+    },
+    "settingWebhookUrl": {
+        "message": "عنوان URL للرد",
+        "description": "عنصر الإعداد في صفحة الإعدادات: عنوان URL للرد"
+    },
+    "settingWebhookMethod": {
+        "message": "طريقة الطلب",
+        "description": "عنصر الإعداد في صفحة الإعدادات: طريقة الطلب"
+    },
+    "settingWebhookArg": {
+        "message": "معاملات الطلب",
+        "description": "عنصر الإعداد في صفحة الإعدادات: معاملات الطلب"
+    },
+    "settingWebhookHeaders": {
+        "message": "رؤوس مخصصة",
+        "description": "عنصر الإعداد في صفحة الإعدادات: رؤوس مخصصة"
+    },
+    "settingDomainAllowList": {
+        "message": "قائمة السماح للنطاقات",
+        "description": "عنصر الإعداد في صفحة الإعدادات: قائمة السماح للنطاقات"
+    },
+    "settingDomainAllowListTip": {
+        "message": "أدخل الجزء النهائي من النطاق، مفصولاً بسطور جديدة، إذا لم يتم التكوين يستخدم الافتراضي .google.com، .amazon.com، portswigger.net",
+        "description": "تلميح في صفحة الإعدادات لقائمة السماح للنطاقات"
+    },
+    "settingResetAndSave": {
+        "message": "إعادة تعيين وحفظ",
+        "description": "زر في صفحة الإعدادات: إعادة تعيين وحفظ"
+    },
+    "settingSave": {
+        "message": "حفظ",
+        "description": "زر في صفحة الإعدادات: حفظ"
+    }
+}

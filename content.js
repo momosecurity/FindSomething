@@ -80,18 +80,32 @@
             }
             return false
         }
+        function isJavaScriptFile(url) {
+            try {
+                // 使用URL构造函数解析URL
+                const parsedUrl = new URL(url);
+
+                // 获取URL的pathname部分
+                const pathname = parsedUrl.pathname;
+
+                // 检查pathname是否以.js结尾
+                return pathname.endsWith('.js');
+            } catch (error) {
+                // 如果URL无效，则捕获错误
+                return false;
+            }
+        }
 
         function deal_url(u){
-            if(u.indexOf(".js")=='-1' && !is_script(u)){
-                return ;
-            }else if(u.substring(0,4)=="http"){
-                return u;
+            let url;
+            if(u.substring(0,4)=="http"){
+                url = u;
             }
             else if(u.substring(0,2)=="//"){
-                return protocol+u;
+                url = protocol+u;
             }
             else if(u.substring(0,1)=='/'){
-                return protocol+'//'+host+u;
+                url = protocol+'//'+host+u;
             }
             else if(u.substring(0,2)=='./'){
                 if (href.indexOf('#')>0) {
@@ -99,7 +113,7 @@
                 }else{
                     tmp_href = href;
                 }
-                return tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
+                url = tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
             }else{
                 // console.log("not match prefix:"+u+",like http // / ./")
                 if (href.indexOf('#')>0) {
@@ -107,8 +121,17 @@
                 }else{
                     tmp_href = href;
                 }
-                return tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
+                url = tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
             }
+
+            if(!isJavaScriptFile(url) && !is_script(u)){
+                // console.log('非js:'+u);
+                // if(u.indexOf('.js')>-1){
+                //     console.log('有js关键字:'+u);
+                // }
+                return ;
+            }
+            return url;
         }
     }
 
