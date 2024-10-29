@@ -42,7 +42,7 @@
             }
             // target_list.push(window.location.href);
             
-            // console.log(source_href,source_src,script_src)
+            console.log(source_href,source_src,script_src)
             if(source_href){
                 for(var i=0;i<source_href.length;i++){
                     var u = deal_url(source_href[i].substring(6,source_href[i].length-1));
@@ -125,12 +125,13 @@
             }
 
             if(!isJavaScriptFile(url) && !is_script(u)){
-                // console.log('非js:'+u);
-                // if(u.indexOf('.js')>-1){
-                //     console.log('有js关键字:'+u);
-                // }
+                console.log('非js:'+u);
+                if(u.indexOf('.js')>-1){
+                    console.log('有js关键字:'+u);
+                }
                 return ;
             }
+            console.log(url)
             return url;
         }
     }

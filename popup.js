@@ -129,40 +129,48 @@ function show_info(result_data) {
 }
 
 getCurrentTab().then(function get_info(tab) {
-    // console.log("findsomething_result_"+tab.url)
     chrome.storage.local.get(["findsomething_result_"+tab.url], function(result_data) {
         if (!result_data){
-            sleep(100);
-            get_info(tab);
             return;
         }
         result_data = result_data["findsomething_result_"+tab.url]
         // console.log(result_data)
-        if(!result_data || result_data['done']!='done'){
-            // console.log('还未提取完成');
-            if(result_data && result_data.donetasklist){
-                // console.log("findsomething_result_"+tab.url)
-                chrome.storage.local.get(["findsomething_result_"+tab.url], function(result){show_info(result["findsomething_result_"+tab.url]);});
-                // show_info(result_data);
-                document.getElementById('taskstatus').textContent = chrome.i18n.getMessage("popupProcessing") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
-            }else{
-                document.getElementById('taskstatus').textContent = chrome.i18n.getMessage("popupProcessing");
-            }
-            sleep(100);
-            get_info(tab);
+        if (!result_data){
             return;
         }
-        // console.log(result_data)
-        document.getElementById('taskstatus').textContent = chrome.i18n.getMessage("popupComplete") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
-        chrome.storage.local.get(["findsomething_result_"+tab.url], function(result){show_info(result["findsomething_result_"+tab.url]);});
-        // show_info(result_data);
-        // 结果不一致继续刷新
-        // if(result_data['donetasklist'].length!=result_data['tasklist'].length){
-        //     get_info(tab);
-        // }
+        show_info(result_data);
+        if(result_data.donetasklist){
+            if(result_data['done']!='done'){
+               document.getElementById('taskstatus').textContent = chrome.i18n.getMessage("popupProcessing") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+            }else{
+                document.getElementById('taskstatus').textContent = chrome.i18n.getMessage("popupComplete") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+            }
+        }else{
+            document.getElementById('taskstatus').textContent = chrome.i18n.getMessage("popupProcessing");
+        }
         return;
     });
 });
 
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+    getCurrentTab().then(function get_info(tab) {
+        for (let [key, {oldValue, newValue}] of Object.entries(changes)) {
+            if(key=="findsomething_result_"+tab.url){
+                const result_data = newValue;
+                // console.log(newValue)
+                show_info(result_data);
+                if(result_data.donetasklist){
+                    if(result_data['done']!='done'){
+                       document.getElementById('taskstatus').textContent = chrome.i18n.getMessage("popupProcessing") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+                    }else{
+                        document.getElementById('taskstatus').textContent = chrome.i18n.getMessage("popupComplete") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+                    }
+                }else{
+                    document.getElementById('taskstatus').textContent = chrome.i18n.getMessage("popupProcessing");
+                }
+            }
+        }
+    })
+})
 
 init_copy();
