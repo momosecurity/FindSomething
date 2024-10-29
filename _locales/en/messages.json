@@ -115,6 +115,10 @@
         "message": "Auto Timeout",
         "description": "Title on the settings page: Auto Timeout"
     },
+    "settingSafe": {
+        "message": "Safe Mode",
+        "description": "Title on the settings page: Safe Mode"
+    },
     "settingWebhook": {
         "message": "Webhook",
         "description": "Title on the settings page: Webhook"

@@ -17,6 +17,7 @@ function init_locales() {
 		"settingWebhookArg",
 		"settingWebhookHeaders",
 		"settingDomainAllowList",
+		"settingSafe"
     ];
 
     for (const id of settingIdList) {
@@ -100,6 +101,16 @@ document.getElementById("fetch_timeout").onclick=function () {
 	// console.log(webhook_setting);
 }
 
+document.getElementById("settingSafeMode").onclick=function () {
+	// var webhook_setting = {};
+	chrome.storage.local.get(["settingSafeMode"], function(settings){
+		// console.log(settings);
+		chrome.storage.local.set({"settingSafeMode": settings["settingSafeMode"]==true ? false : true});
+		document.getElementById('settingSafeMode').textContent = settings["settingSafeMode"]==true ? chrome.i18n.getMessage("settingClosed") : chrome.i18n.getMessage("settingOpened");
+	});
+}
+
+
 chrome.storage.local.get(["webhook_setting"], function(settings){
 	console.log(settings);
 	if(!settings || settings == {} || !settings["webhook_setting"] ){
@@ -116,6 +127,10 @@ chrome.storage.local.get(["global_float"], function(settings){
 });
 chrome.storage.local.get(["fetch_timeout"], function(settings){
 	document.getElementById('fetch_timeout').textContent = settings["fetch_timeout"]==true ? chrome.i18n.getMessage("settingOpened") : chrome.i18n.getMessage("settingClosed");
+});
+chrome.storage.local.set({"settingSafeMode": true});
+chrome.storage.local.get(["settingSafeMode"], function(settings){
+	document.getElementById('settingSafeMode').textContent = settings["settingSafeMode"]==true ? chrome.i18n.getMessage("settingOpened") : chrome.i18n.getMessage("settingClosed");
 });
 chrome.storage.local.get(["allowlist"], function(allowlist){
 	if(allowlist && allowlist["allowlist"]){

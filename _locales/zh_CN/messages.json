@@ -115,6 +115,10 @@
 		"message":"自动超时",
 		"description":"配置页的标题：自动超时"
 	},
+	"settingSafe":{
+		"message":"安全模式",
+		"description":"配置页的标题：安全模式"
+	},
 	"settingWebhook":{
 		"message":"Webhook",
 		"description":"配置页的标题：Webhook"

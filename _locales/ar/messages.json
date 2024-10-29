@@ -115,6 +115,10 @@
         "message": "المهلة التلقائية",
         "description": "عنوان في صفحة الإعدادات: المهلة التلقائية"
     },
+    "settingSafe": {
+        "message": "الوضع الآمن",
+        "description": "عنوان في صفحة الإعدادات: الوضع الآمن"
+    },
     "settingWebhook": {
         "message": "Webhook",
         "description": "عنوان في صفحة الإعدادات: Webhook"

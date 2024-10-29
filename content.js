@@ -7,6 +7,7 @@
     var href = window.location.href;
     // var source = document.getElementsByTagName('html')[0].innerHTML;
     var source = document.documentElement.outerHTML;
+    var settingSafeMode;
     init_source(source);
 
     // 获取页面中所有的 iframe 元素，执行同样的逻辑
@@ -29,6 +30,9 @@
         var source_href = source.match(/href=['"].*?['"]/g);
         var source_src = source.match(/src=['"].*?['"]/g);
         var script_src = source.match(/<script [^><]*?src=['"].*?['"]/g);
+        chrome.storage.local.get(["settingSafeMode"], function(settings){
+            settingSafeMode = settings["settingSafeMode"]==true ? true : false;
+        });
         chrome.storage.local.get(["allowlist"], function(settings){
             // console.log(settings , settings['allowlist'])
             if(settings && settings['allowlist']){
@@ -123,15 +127,15 @@
                 }
                 url = tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
             }
-
-            if(!isJavaScriptFile(url) && !is_script(u)){
-                console.log('非js:'+u);
-                if(u.indexOf('.js')>-1){
-                    console.log('有js关键字:'+u);
-                }
+            // console.log(settingSafeMode)
+            if(settingSafeMode && !isJavaScriptFile(url) && !is_script(u)){
+                // console.log('非js:'+u);
+                // if(u.indexOf('.js')>-1){
+                //     console.log('有js关键字:'+u);
+                // }
                 return ;
             }
-            console.log(url)
+            // console.log(url)
             return url;
         }
     }
