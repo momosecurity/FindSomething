@@ -7,7 +7,7 @@
     var href = window.location.href;
     // var source = document.getElementsByTagName('html')[0].innerHTML;
     var source = document.documentElement.outerHTML;
-    var settingSafeMode;
+    var settingSafeMode = true;
     init_source(source);
 
     // 获取页面中所有的 iframe 元素，执行同样的逻辑
@@ -31,7 +31,7 @@
         var source_src = source.match(/src=['"].*?['"]/g);
         var script_src = source.match(/<script [^><]*?src=['"].*?['"]/g);
         chrome.storage.local.get(["settingSafeMode"], function(settings){
-            settingSafeMode = settings["settingSafeMode"]==true ? true : false;
+            settingSafeMode = settings["settingSafeMode"]==false ? false : true;
         });
         chrome.storage.local.get(["allowlist"], function(settings){
             // console.log(settings , settings['allowlist'])

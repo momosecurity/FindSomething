@@ -130,10 +130,11 @@ chrome.storage.local.get(["fetch_timeout"], function(settings){
 });
 
 chrome.storage.local.get(["settingSafeMode"], function(settings){
+	document.getElementById('settingSafeMode').textContent = settings["settingSafeMode"]==true ? chrome.i18n.getMessage("settingOpened") : chrome.i18n.getMessage("settingClosed");
 	if(settings["settingSafeMode"]==null){
 		chrome.storage.local.set({"settingSafeMode": true});
+		document.getElementById('settingSafeMode').textContent = chrome.i18n.getMessage("settingOpened");
 	}
-	document.getElementById('settingSafeMode').textContent = settings["settingSafeMode"]==true ? chrome.i18n.getMessage("settingOpened") : chrome.i18n.getMessage("settingClosed");
 });
 chrome.storage.local.get(["allowlist"], function(allowlist){
 	if(allowlist && allowlist["allowlist"]){
