@@ -46,7 +46,7 @@
             }
             // target_list.push(window.location.href);
             
-            console.log(source_href,source_src,script_src)
+            // console.log(source_href,source_src,script_src)
             if(source_href){
                 for(var i=0;i<source_href.length;i++){
                     var u = deal_url(source_href[i].substring(6,source_href[i].length-1));
