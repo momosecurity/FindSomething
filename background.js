@@ -1135,3 +1135,13 @@ browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         refresh_count();
     }
 });
+
+browser.runtime.onInstalled.addListener(function (details) {
+    if (['install', 'update'].includes(details.reason)) {
+        browser.tabs.create({
+            url: browser.runtime.getURL("getstarted.html"),
+            // type: "popup"
+        });
+    }
+    // console.log('onInstalled:',details)
+})

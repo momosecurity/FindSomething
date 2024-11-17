@@ -1,22 +1,63 @@
 // @Date    : 2020-09-12 16:26:48
 // @Author  : residuallaugh
+function setTextContentById(id){
+    document.getElementById(id).textContent = browser.i18n.getMessage(id);
+}
+
+function init_locales() {
+    const popupIdList = [
+        "Zhuye",
+        "Peizhi",
+        "popupIp",
+        "popupIpPort",
+        "popupDomain",
+        "popupSfz",
+        "popupMobile",
+        "popupMail",
+        "popupJwt",
+        "popupAlgorithm",
+        "popupSecret",
+        "popupPath",
+        "popupIncompletePath",
+        "popupUrl",
+        "popupStaticPath",
+    ];
+
+    for (const id of popupIdList) {
+        try{
+            setTextContentById(id)
+        }catch{
+            console.log(id)
+        }
+    }
+
+
+}
+
+init_locales()
+
+
 var key = ["ip","ip_port","domain","path","incomplete_path","url","static","sfz","mobile","mail","jwt","algorithm","secret"]
 
 function init_copy() {
     var elements = document.getElementsByClassName("copy");
     if(elements){
         for (var i=0, len=elements.length|0; i<len; i=i+1|0) {
+            elements[i].textContent = browser.i18n.getMessage("popupCopy");
             let ele_name = elements[i].name;
             let ele_id = elements[i].id;
+            if (ele_id == "popupCopyurl"){
+                elements[i].textContent = browser.i18n.getMessage("popupCopyurl");
+            }
             elements[i].onclick=function () {
                 var inp =document.createElement('textarea');
                 document.body.appendChild(inp)
                 var copytext = document.getElementById(ele_name).textContent;
-                if (ele_id == "path_url_button"){
+                if (ele_id == "popupCopyurl"){
                     Promise.all([getCurrentTab().then(function x(tab){
                         // console.log(tab);
                         if(tab == undefined){
-                            alert("请点击原页面后再复制：）")
+                            alert(browser.i18n.getMessage("popupTipClickBeforeCopy"))
                             return;
                         }
                         var url = new URL(tab.url)
@@ -87,40 +128,48 @@ function show_info(result_data) {
 }
 
 getCurrentTab().then(function get_info(tab) {
-    // console.log("findsomething_result_"+tab.url)
     browser.storage.local.get(["findsomething_result_"+tab.url], function(result_data) {
         if (!result_data){
-            sleep(100);
-            get_info(tab);
             return;
         }
         result_data = result_data["findsomething_result_"+tab.url]
         // console.log(result_data)
-        if(!result_data || result_data['done']!='done'){
-            // console.log('还未提取完成');
-            if(result_data && result_data.donetasklist){
-                // console.log("findsomething_result_"+tab.url)
-                browser.storage.local.get(["findsomething_result_"+tab.url], function(result){show_info(result["findsomething_result_"+tab.url]);});
-                // show_info(result_data);
-                document.getElementById('taskstatus').textContent = "处理中.."+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
-            }else{
-                document.getElementById('taskstatus').textContent = "处理中..";
-            }
-            sleep(1000);
-            get_info(tab);
+        if (!result_data){
             return;
         }
-        // console.log(result_data)
-        document.getElementById('taskstatus').textContent = "处理完成："+result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
-        browser.storage.local.get(["findsomething_result_"+tab.url], function(result){show_info(result["findsomething_result_"+tab.url]);});
-        // show_info(result_data);
-        // 结果不一致继续刷新
-        // if(result_data['donetasklist'].length!=result_data['tasklist'].length){
-        //     get_info(tab);
-        // }
+        show_info(result_data);
+        if(result_data.donetasklist){
+            if(result_data['done']!='done'){
+               document.getElementById('taskstatus').textContent = browser.i18n.getMessage("popupProcessing") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+            }else{
+                document.getElementById('taskstatus').textContent = browser.i18n.getMessage("popupComplete") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+            }
+        }else{
+            document.getElementById('taskstatus').textContent = browser.i18n.getMessage("popupProcessing");
+        }
         return;
     });
 });
 
+browser.storage.onChanged.addListener(function(changes, namespace) {
+    getCurrentTab().then(function get_info(tab) {
+        for (let [key, {oldValue, newValue}] of Object.entries(changes)) {
+            if(key=="findsomething_result_"+tab.url){
+                const result_data = newValue;
+                // console.log(newValue)
+                show_info(result_data);
+                if(result_data.donetasklist){
+                    if(result_data['done']!='done'){
+                       document.getElementById('taskstatus').textContent = browser.i18n.getMessage("popupProcessing") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+                    }else{
+                        document.getElementById('taskstatus').textContent = browser.i18n.getMessage("popupComplete") + result_data['donetasklist'].length+"/"+result_data['tasklist'].length;
+                    }
+                }else{
+                    document.getElementById('taskstatus').textContent = browser.i18n.getMessage("popupProcessing");
+                }
+            }
+        }
+    })
+})
 
 init_copy();
