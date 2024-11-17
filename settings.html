@@ -9,40 +9,41 @@
 </head>
 <body style="width:780px; font-size: 14px;">
     <div style="width:780px; height: 30px; margin-left: 15px;">
-        <a href="popup.html"><div style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #ffffff; color: #000000; border: 1px solid black;border-radius: 2px 0px 0px 2px;">主页</div></a>
-        <a href="settings.html"><div style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #000000; color: #ffffff; border: 1px solid black;border-radius: 0px 2px 2px 0px;">配置</div></a>
+        <a href="popup.html"><div id="Zhuye" style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #ffffff; color: #000000; border: 1px solid black;border-radius: 2px 0px 0px 2px;">主页</div></a>
+        <a href="settings.html"><div id="Peizhi" style="width: 55px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #000000; color: #ffffff; border: 1px solid black;border-radius: 0px 2px 2px 0px;">配置</div></a>
     </div>
     <div style="width:100%; height: 800px; margin-left: 15px; margin-top: 16px;">
         <div style="width: 300px; float: left;">
-           <div class="findsomething_title" style="margin-bottom:10px;"><div style="float:left; width: 230px;">清理缓存</div><a href="#"><div id="clear_localStorage" style="width: 60px; float: left;">清理</div></a></div>
-           <div class="findsomething_title" style="margin-bottom:10px;"><div style="float:left; width: 230px;">全局悬浮窗</div><a href="#"><div id="global_float" style="width: 60px; float: left;">打开</div></a></div>
-           <div class="findsomething_title" style="margin-bottom:10px;"><div style="float:left; width: 230px;">自动超时</div><a href="#"><div id="fetch_timeout" style="width: 60px; float: left;">打开</div></a></div>
-           <div class="findsomething_title" style="margin-bottom:10px;">Webhook</div>
+           <div class="findsomething_title" style="margin-bottom:10px;"><div style="float:left; width: 230px;" id="settingClearCache">清理缓存</div><a href="#"><div id="settingClearLocalStorage" style="width: 60px; float: left;">清理</div></a></div>
+           <div class="findsomething_title" style="margin-bottom:10px;"><div style="float:left; width: 230px;" id="settingGlobalFloatingWindow">全局悬浮窗</div><a href="#"><div id="global_float" style="width: 60px; float: left;">打开</div></a></div>
+           <div class="findsomething_title" style="margin-bottom:10px;"><div style="float:left; width: 230px;" id="settingAutoTimeout">自动超时</div><a href="#"><div id="fetch_timeout" style="width: 60px; float: left;">打开</div></a></div>
+            <div class="findsomething_title" style="margin-bottom:10px;"><div style="float:left; width: 230px;" id="settingSafe">安全模式</div><a href="#"><div id="settingSafeMode" style="width: 60px; float: left;">打开</div></a></div>
+           <div class="findsomething_title" style="margin-bottom:10px;" id="settingWebhook">Webhook</div>
            <div style="width: 300px; float: left; text-align: left; line-height: 34px;">
-                <div style="float: left; width: 100px;">回调地址</div><div style="float: left; width: 198px; height: 34px;"><input type="text" id="url" style="width: 198px; height: 26px; padding: 0 0 0 0;  border: 1px solid #d8d8d8;"></div>
-                <div style="float: left; width: 100px;">请求方法</div><div style="float: left; width: 198px; height: 34px;"><select id="method" style="width: 200px; height: 28px; border-color: #e8e8e8;" >
+                <div style="float: left; width: 100px;" id="settingWebhookUrl">回调地址</div><div style="float: left; width: 198px; height: 34px;"><input type="text" id="url" style="width: 198px; height: 26px; padding: 0 0 0 0;  border: 1px solid #d8d8d8;"></div>
+                <div style="float: left; width: 100px; height: 68px;" id="settingWebhookMethod">请求方法</div><div style="float: left; width: 198px; height: 68px;"><select id="method" style="width: 200px; height: 28px; border-color: #e8e8e8;" >
                   <option value ="GET">GET</option>
                   <option value ="POST">POST</option>
                </select></div>
-                <div style="float: left; width: 100px;">请求参数</div><div style="float: left; width: 198px; height: 34px;"><input type="text" id="arg" style="width: 198px; height: 26px; padding: 0 0 0 0;  border: 1px solid #d8d8d8;"></div>
-                <div style="float: left; width: 100px;">自定义headers</div><div style="float: left; width: 198px; margin-top:6px;"><textarea id="headers" style="width: 198px; padding: 0 0 0 0; border-color: #e8e8e8; min-height: 200px;" 
+                <div style="float: left; width: 100px; height: 68px;" id="settingWebhookArg">请求参数</div><div style="float: left; width: 198px; height: 68px;"><input type="text" id="arg" style="width: 198px; height: 26px; padding: 0 0 0 0;  border: 1px solid #d8d8d8;"></div>
+                <div style="float: left; width: 100px;" id="settingWebhookHeaders">自定义headers</div><div style="float: left; width: 198px; margin-top:6px;"><textarea id="headers" style="width: 198px; padding: 0 0 0 0; border-color: #e8e8e8; min-height: 200px;" 
 placeholder='{
     "auth":"auth_key"
 }'></textarea></div>
            </div>
            
-           <a href="#"><div style="width: 90px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #ffffff; color: #000000; border: 1px solid black;border-radius: 2px 2px 2px 2px; margin-top: 10px;" id="reset">置空并保存</div></a>
-           <a href="#"><div style="width: 40px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #000000; color: #ffffff; border: 1px solid black;border-radius: 2px 2px 2px 2px; margin-left: 10px; margin-top: 10px;" id="save">保存</div></a>
+           <a href="#"><div style="width: 100px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #ffffff; color: #000000; border: 1px solid black;border-radius: 2px 2px 2px 2px; margin-top: 10px;" id="reset" class="settingResetAndSave">置空并保存</div></a>
+           <a href="#"><div style="width: 40px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #000000; color: #ffffff; border: 1px solid black;border-radius: 2px 2px 2px 2px; margin-left: 10px; margin-top: 10px;" id="save" class="settingSave">保存</div></a>
         <div style="width: 300px; float: left; margin-top: 20px;">
-            <div class="findsomething_title" style="margin-bottom:10px;">域名白名单</div>
-            <div style="float: left; width: 198px; margin-top:6px;"><textarea id="allowlist" style="width: 198px; padding: 0 0 0 0; border-color: #e8e8e8; min-height: 200px;" placeholder='输入域名的结尾部分，以换行分隔，若不配置默认使用.google.com,.amazon.com,portswigger.net'>.google.com
+            <div class="findsomething_title" style="margin-bottom:10px;" id="settingDomainAllowList">域名白名单</div>
+            <div style="float: left; width: 198px; margin-top:6px;"><textarea id="allowlist" style="width: 198px; padding: 0 0 0 0; border-color: #e8e8e8; min-height: 200px;">.google.com
 .amazon.com
 portswigger.net
 </textarea></div>
         </div>
         <div style="width: 300px; float: left; margin-top: 20px;">
-           <a href="#"><div style="width: 90px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #ffffff; color: #000000; border: 1px solid black;border-radius: 2px 2px 2px 2px; margin-top: 10px;" id="reset_allowlist">置空并保存</div></a>
-           <a href="#"><div style="width: 40px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #000000; color: #ffffff; border: 1px solid black;border-radius: 2px 2px 2px 2px; margin-left: 10px; margin-top: 10px;" id="save_allowlist">保存</div></a>
+           <a href="#"><div style="width: 100px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #ffffff; color: #000000; border: 1px solid black;border-radius: 2px 2px 2px 2px; margin-top: 10px;" id="reset_allowlist" class="settingResetAndSave">置空并保存</div></a>
+           <a href="#"><div style="width: 40px; height: 28px; float: left; text-align: center; line-height: 28px; font-size: 14px; background: #000000; color: #ffffff; border: 1px solid black;border-radius: 2px 2px 2px 2px; margin-left: 10px; margin-top: 10px;" id="save_allowlist" class="settingSave">保存</div></a>
         </div>
 
         <div style="width: 600px; height: 800px; float: left;">

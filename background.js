@@ -1137,3 +1137,13 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         refresh_count();
     }
 });
+
+chrome.runtime.onInstalled.addListener(function (details) {
+    if (['install', 'update'].includes(details.reason)) {
+        chrome.tabs.create({
+            url: chrome.runtime.getURL("getstarted.html"),
+            // type: "popup"
+        });
+    }
+    // console.log('onInstalled:',details)
+})
