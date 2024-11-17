@@ -1,0 +1,1 @@
+document.getElementById('content').innerHTML = marked.parse(browser.i18n.getMessage('getstartedContent'));

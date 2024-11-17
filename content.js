@@ -7,6 +7,7 @@
     var href = window.location.href;
     // var source = document.getElementsByTagName('html')[0].innerHTML;
     var source = document.documentElement.outerHTML;
+    var settingSafeMode = true;
     init_source(source);
 
     // 获取页面中所有的 iframe 元素，执行同样的逻辑
@@ -29,6 +30,9 @@
         var source_href = source.match(/href=['"].*?['"]/g);
         var source_src = source.match(/src=['"].*?['"]/g);
         var script_src = source.match(/<script [^><]*?src=['"].*?['"]/g);
+        browser.storage.local.get(["settingSafeMode"], function(settings){
+            settingSafeMode = settings["settingSafeMode"]==false ? false : true;
+        });
         browser.storage.local.get(["allowlist"], function(settings){
             // console.log(settings , settings['allowlist'])
             if(settings && settings['allowlist']){
@@ -80,18 +84,32 @@
             }
             return false
         }
+        function isJavaScriptFile(url) {
+            try {
+                // 使用URL构造函数解析URL
+                const parsedUrl = new URL(url);
+
+                // 获取URL的pathname部分
+                const pathname = parsedUrl.pathname;
+
+                // 检查pathname是否以.js结尾
+                return pathname.endsWith('.js');
+            } catch (error) {
+                // 如果URL无效，则捕获错误
+                return false;
+            }
+        }
 
         function deal_url(u){
-            if(u.indexOf(".js")=='-1' && !is_script(u)){
-                return ;
-            }else if(u.substring(0,4)=="http"){
-                return u;
+            let url;
+            if(u.substring(0,4)=="http"){
+                url = u;
             }
             else if(u.substring(0,2)=="//"){
-                return protocol+u;
+                url = protocol+u;
             }
             else if(u.substring(0,1)=='/'){
-                return protocol+'//'+host+u;
+                url = protocol+'//'+host+u;
             }
             else if(u.substring(0,2)=='./'){
                 if (href.indexOf('#')>0) {
@@ -99,7 +117,7 @@
                 }else{
                     tmp_href = href;
                 }
-                return tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
+                url = tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
             }else{
                 // console.log("not match prefix:"+u+",like http // / ./")
                 if (href.indexOf('#')>0) {
@@ -107,8 +125,17 @@
                 }else{
                     tmp_href = href;
                 }
-                return tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
+                url = tmp_href.substring(0,tmp_href.lastIndexOf('/')+1)+u;
             }
+            // console.log(settingSafeMode)
+            if(settingSafeMode && !isJavaScriptFile(url) && !is_script(u)){
+                // console.log('非js:'+u);
+                // if(u.indexOf('.js')>-1){
+                //     console.log('有js关键字:'+u);
+                // }
+                return ;
+            }
+            return url;
         }
     }
 
